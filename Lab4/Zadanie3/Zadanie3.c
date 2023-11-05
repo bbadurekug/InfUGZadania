@@ -25,3 +25,5 @@ int main(){
     return 0;
 
 }
+
+// TO JEST ZADANIE 4, jakos nadpisalem 3
