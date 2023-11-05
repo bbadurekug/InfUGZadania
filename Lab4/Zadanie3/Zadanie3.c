@@ -2,23 +2,24 @@
 
 int main(){
 
-    int a,b;
-    int c = 1;
-    int potega;
+    int dlugosc;
 
-    printf("Podaj parę liczb naturalnych:\n");
-    scanf("%d", &a);
-    scanf("%d", &b);
+    printf("Jak długa ma być tablica?\n");
+    scanf("%d", &dlugosc);
 
-    potega = a;
+    int tablica[dlugosc];
 
-    for(; potega < b; c++){
+    for(int i = 0; i < dlugosc; i++){
 
-        potega = potega * a;
+        tablica[i] = i+1;
 
     }
 
-    printf("%d do potęgi %d jest większe od %d",a,c,b);
+    for(int i = 0; i < dlugosc; i++){
+
+        printf("%d\n", tablica[i]*tablica[i]);
+
+    }
 
 
     return 0;
