@@ -55,27 +55,8 @@ int main(){
         x1 = x2;
         y1 = y2;
 
-        if(deltaX < 0){
-
-            x2 = x2 - deltaX;
-
-        }
-        else if(deltaX >= 0){
-
-            x2 = x2 - deltaX;
-
-        }
-
-        if(deltaY < 0){
-
-            y2 = y2 - deltaY;
-
-        }
-        else if(deltaY >= 0){
-
-            y2 = y2 - deltaY;
-
-        }                                   //sprawdzanie w ktora strone porusza sie X
+        x2 = x2 - deltaX;
+        y2 = y2 - deltaY;
 
 
     }while(((x2 <= 11)&&(y2 <= 11)) && ((x2 > -1)&&(y2 > -1)));
