@@ -51,6 +51,8 @@ int main(){
 
     }
 
+
+
     for(int i1=0; i1 < n; i1++){                                //wypisuje na ekranie
 
 
@@ -58,7 +60,7 @@ int main(){
 
             if(i2 == 0){
 
-                for(int i3 = ((dlugoscInta(pascal[n-1][n/2]) * (n-1)) - (i1 * dlugoscInta(pascal[n-1][n/2])))/2; i3 > 0; i3--){       //tutaj dodajemy spacje zeby trojkat sie wyrownal
+                for(int i3 = (dlugoscInta(pascal[n-1][n/2]) * (n-1)) - (i1 * dlugoscInta(pascal[n-1][n/2])); i3 > 0; i3--){       //tutaj dodajemy spacje zeby trojkat sie wyrownal
 
                     printf(" ");
 
@@ -66,11 +68,18 @@ int main(){
 
             }
 
-            if(pascal[i1][i2] != 0){                     //nie chcemy wypisywac 0 na ekranie
+            if(pascal[i1][i2] != 0){                //nie chcemy wypisywac 0 na ekranie
 
-                printf("%d ", pascal[i1][i2]);
 
-                for(int i4 = 1; i4 < dlugoscInta(pascal[n-1][n/2]) - dlugoscInta(pascal[i1][i2]); i4++){
+                for(int i4 = 0; i4 < (dlugoscInta(pascal[n-1][n/2])/2); i4++){           //(dlugoscInta(pascal[n-1][n/2]) - dlugoscInta(pascal[i1][i2]))/2
+
+                    //printf(" ");
+
+                }
+
+                printf("%d", pascal[i1][i2]);
+
+                for(int i4 = dlugoscInta(pascal[i1][i2]) - 1; i4 < dlugoscInta(pascal[n-1][n/2]); i4++){
 
                     printf(" ");
 
@@ -89,4 +98,4 @@ int main(){
 
 //mozna minimalnie zoptymalizowac ilosc spacji i ich rozmieszczenie
 
-//maksymalny n ktory pokazuje bez przechodzenia na nastepna linie to 29
+//maksymalny n ktory pokazuje bez przechodzenia na nastepna linie to 27
