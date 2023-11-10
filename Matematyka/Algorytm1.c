@@ -45,6 +45,28 @@ int max(int tab[], int dlugoscTab){
     return najwiekszy;
 }
 
+int maxBez(int tab[], int dlugoscTab, int bez){
+
+    int najwiekszy = tab[0];
+
+    for(int i = 0; i < (dlugoscTab - 1); i++){
+
+        if(tab[i] > tab[i+1] && tab[i] > najwiekszy && tab[i] != bez){
+
+            najwiekszy = tab[i];
+
+        }
+        else if(tab[i+1] > tab[i] && tab[i+1] > najwiekszy && tab[i] != bez){
+
+            najwiekszy = tab[i+1];
+
+        }
+
+    }
+
+    return najwiekszy;
+}
+
 int main(){
 
     int n;
@@ -83,13 +105,42 @@ int main(){
 
     }
 
-    podzbiory[0][0] = 157;                      //znak pustego zbioru w ASCII
+    podzbiory[0][0] = 157;                                  //znak pustego zbioru w ASCII
+
+    int pomocnicza;
 
     for(int i1=1; i1 < potegowanie(2,n); i1++){
 
         for(int i2=0; i2 < n; i2++){
 
-            podzbiory[i1][i2] = max(zbior, n);
+            for(int i3=0; i3 < n; i3++){
+
+                pomocnicza = 0;
+
+                if(podzbiory[i1][i3] == max(zbior, n)){
+
+                    pomocnicza = 1;
+
+                }
+
+            }
+
+            printf("Pomocnicza %d\n", pomocnicza);
+
+            if(pomocnicza == 0){
+
+                podzbiory[i1][i2] = max(zbior, n);
+            }
+            else{
+
+                podzbiory[i1][i2] = maxBez(zbior, n, max(zbior, n));
+            }
+
+            for(int i3=0; i3 < n; i3++){
+
+                podzbiory[i1+1][i3] = podzbiory[i1][i3];
+
+            }
 
         }
 
