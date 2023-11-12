@@ -1,70 +1,51 @@
 #include<stdio.h>
+#include<stdlib.h>
+#include<math.h>
 
-int potegowanie(int a, int b){
+int czyAjestwB(int a, int b){
 
-    int wynik;
+    int jest=0;
 
-    wynik = a;
+    for(int i = 0; i < log10(b)+1; i++){
 
-    if(b == 0){
+        if((b/(int)pow(10, i) - b/(int)pow(10, i+1) * 10) == a){
 
-        wynik = 1;
-
-    }
-    else{
-
-        for(int i = 1; i < b; i++){
-
-            wynik = wynik * a;
+            jest = 1;
 
         }
+
     }
 
-    return wynik;
+    return jest;
+
 }
 
-int max(int tab[], int dlugoscTab){
 
-    int najwiekszy = tab[0];
+void obliczPodzbiory(short zbior[], int n){
 
-    for(int i = 0; i < (dlugoscTab - 1); i++){
+    int podzbiory[(int)pow(2,n)];
 
-        if(tab[i] > tab[i+1] && tab[i] > najwiekszy){
+    podzbiory[0] = 157;
 
-            najwiekszy = tab[i];
+    for(int i = 1; i < (int)pow(2,n); i++){
 
-        }
-        else if(tab[i+1] > tab[i] && tab[i+1] > najwiekszy){
+        if(!(czyAjestwB(zbior[n-i], podzbiory[i-1]))){
 
-            najwiekszy = tab[i+1];
+            podzbiory[i] = zbior[n-i];
 
         }
+        else{
 
+            podzbiory[i] = zbior[n-(i-1)];
+
+        }
     }
 
-    return najwiekszy;
-}
+    for(int i=0; i < (int)pow(2,n); i++){
 
-int maxBez(int tab[], int dlugoscTab, int bez){
-
-    int najwiekszy = tab[0];
-
-    for(int i = 0; i < (dlugoscTab - 1); i++){
-
-        if(tab[i] > tab[i+1] && tab[i] > najwiekszy && tab[i] != bez){
-
-            najwiekszy = tab[i];
-
-        }
-        else if(tab[i+1] > tab[i] && tab[i+1] > najwiekszy && tab[i] != bez){
-
-            najwiekszy = tab[i+1];
-
-        }
-
+        printf("%d ", podzbiory[i]);
     }
 
-    return najwiekszy;
 }
 
 int main(){
@@ -74,95 +55,22 @@ int main(){
     printf("Podaj dlugosc zbioru:\n");
     scanf("%d", &n);
 
-    int zbior[n];
+    short zbior[n];
 
-    int podzbiory[potegowanie(2,n)][n];
+    for(int i=1; i <= n; i++){
 
-    for(int i1=0; i1 < potegowanie(2,n); i1++){               //zeruje miejsca w tablicy
-
-        for(int i2=0; i2 < n; i2++){
-
-            podzbiory[i1][i2] = 0;
-
-        }
-
+        zbior[i-1] = i;
     }
 
-    printf("Podaj elementy zbioru:\n");
 
-    for(int i = 0; i < n; i++){
-
-        scanf("%d", &zbior[i]);
-
-    }
-
-    printf("\n");
-    printf("Zbior:\n");
-
-    for(int i = 0; i < n; i++){
+    for(int i=0; i < n; i++){
 
         printf("%d ", zbior[i]);
-
     }
 
-    podzbiory[0][0] = 157;                                  //znak pustego zbioru w ASCII
+    printf("\n\n");
 
-    int pomocnicza;
-
-    for(int i1=1; i1 < potegowanie(2,n); i1++){
-
-        for(int i2=0; i2 < n; i2++){
-
-            for(int i3=0; i3 < n; i3++){
-
-                pomocnicza = 0;
-
-                if(podzbiory[i1][i3] == max(zbior, n)){
-
-                    pomocnicza = 1;
-
-                }
-
-            }
-
-            printf("Pomocnicza %d\n", pomocnicza);
-
-            if(pomocnicza == 0){
-
-                podzbiory[i1][i2] = max(zbior, n);
-            }
-            else{
-
-                podzbiory[i1][i2] = maxBez(zbior, n, max(zbior, n));
-            }
-
-            for(int i3=0; i3 < n; i3++){
-
-                podzbiory[i1+1][i3] = podzbiory[i1][i3];
-
-            }
-
-        }
-
-    }
-
-
-    printf("\n");
-    printf("\n");
-
-    printf("Podzbiory: \n");
-
-    for(int i1=0; i1 < potegowanie(2,n); i1++){
-
-        for(int i2=0; i2 < n; i2++){
-
-            printf("%d ", podzbiory[i1][i2]);
-
-        }
-
-        printf("\n");
-
-    }
+    obliczPodzbiory(zbior, n);
 
     return 0;
 
