@@ -1,5 +1,4 @@
 #include<stdio.h>
-#include<stdlib.h>
 #include<math.h>
 
 int czyAjestwB(int a, int b){
@@ -64,30 +63,43 @@ int usuwanieWiekszych(int cyfra, int liczbaSprawdzana, int n){
 
 }
 
-
 void obliczPodzbiory(short zbior[], int n){
 
     int podzbiory[(int)pow(2,n)];
 
-    podzbiory[0] = 0;
+    for(int z = 0; z < (int)pow(2,n); z++){
+
+        podzbiory[z] = 0;
+    }
+
+    //ZEROWANIE TABLICY
 
     for(int i = 1; i < (int)pow(2,n); i++){
 
-        if(!(czyAjestwB(zbior[n-1], podzbiory[i-1]))){
+        for(int j = 1; j <= n; j++){
 
-            podzbiory[i] = zbior[n-1];
+            if(!(czyAjestwB(zbior[n-j], podzbiory[i]))){
+
+                podzbiory[i] = podzbiory[i] * 10 + zbior[n-j];
+                break;
+
+            }
+            else{
+
+                podzbiory[i] = usuwanieWiekszych(zbior[n-(j+1)],podzbiory[i],n);
+
+            }
 
         }
-        else{
-
-            podzbiory[i] = usuwanieWiekszych(zbior[n-2],podzbiory[i-1],n) * 10 + zbior[n-2];
-
-        }
+        if(i+1 < (int)pow(2,n))
+            podzbiory[i+1] = podzbiory[i];
+        //printf("i %d\n", podzbiory[i]);
+        //printf("i+1 %d\n", podzbiory[i+1]);
 
     }
 
 
-
+    printf("\nPodzbiory:\n");
 
     podzbiory[0] = 157;
 
@@ -114,6 +126,8 @@ int main(){
 
         zbior[i-1] = i;
     }
+
+    printf("\nZbior:\n");
 
 
     for(int i=0; i < n; i++){
