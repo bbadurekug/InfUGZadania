@@ -1,6 +1,27 @@
 #include<stdio.h>
 #include<math.h>
 
+/*int czyAjestwBTAB2D(int a, int x, int y, int b[x][y]){
+
+    char jest = 0;
+
+    for(int i = 0; i < 3; i++){
+
+        if(b[x][i] == a){
+            jest = 1;
+        }
+
+        printf("b[%d][%d] %d jest %d\n", x, i, b[x][i],jest);
+
+    }
+
+    return jest;
+
+}
+
+//DZIALA! SPRAWDZA CZY LICZBA A JEST W JEDNYM Z ELEMENTOW TABLICY B
+//printf("%d", czyAjestwB(3, 1, 3, tab2D));*/
+
 int czyAjestwB(int a, int b){
 
     int jest=0;
@@ -65,7 +86,7 @@ int usuwanieWiekszych(int cyfra, int liczbaSprawdzana, int n){
 
 void obliczPodzbiory(short zbior[], int n){
 
-    int podzbiory[(int)pow(2,n)];
+    unsigned long long int podzbiory[(int)pow(2,n)];
 
     for(int z = 0; z < (int)pow(2,n); z++){
 
@@ -106,7 +127,7 @@ void obliczPodzbiory(short zbior[], int n){
     for(int i=0; i < (int)pow(2,n); i++){
 
         if(i)
-            printf("%d ", podzbiory[i]);
+            printf("%llu ", podzbiory[i]);
         else
             printf("%c ", podzbiory[i]);
     }
