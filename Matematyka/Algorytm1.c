@@ -1,15 +1,17 @@
 #include<stdio.h>
-#include<stdlib.h>
 #include<math.h>
 
-int czy_liczba_jest_w_tablicy(int cyfra, int x, int y, char tab[x][y]){
+int czy_liczba_jest_w_tablicy(int cyfra, int n, unsigned char tab[n]){
 
     char jest = 0;
 
-    for(int i = 0; i < y; i++){
+    for(int i = 0; i < n; i++){
 
-        if(tab[x][i] == cyfra){
+        if(tab[i] == cyfra){
+
             jest = 1;
+            break;
+
         }
 
     }
@@ -18,30 +20,31 @@ int czy_liczba_jest_w_tablicy(int cyfra, int x, int y, char tab[x][y]){
 
 }
 
-void usuwanie_wiekszych(int cyfra, int x , int y, char tab[x][y]){
+void usuwanie_wiekszych(int cyfra, int n, unsigned char tab[n]){
 
-    char wieksze[y];
+    char wieksze[n];
 
-    for(int i = 0; i < y; i++){                 //sprawdza ktore cyfry w liczbie sa wieksze
+    for(int i = 0; i < n; i++){                 //sprawdza ktore cyfry w liczbie sa wieksze
 
-        if(tab[x][i] > cyfra){
+        if(tab[i] > cyfra){
 
             wieksze[i] = 1;
 
         }
         else
+
             wieksze[i] = 0;
 
     }
 
-    int nowyTab[y];
+    int nowyTab[n];
     char nowyTabIndex = 0;
 
-    for(int j = 0; j < y; j++){                 //tworzy nowa tablice bez wiekszych liczb
+    for(int j = 0; j < n; j++){                 //tworzy nowa tablice bez wiekszych liczb
 
         if(wieksze[j] == 0){
 
-            nowyTab[nowyTabIndex] = tab[x][j];
+            nowyTab[nowyTabIndex] = tab[j];
             nowyTabIndex++;
 
         }
@@ -49,26 +52,29 @@ void usuwanie_wiekszych(int cyfra, int x , int y, char tab[x][y]){
 
             nowyTab[nowyTabIndex] = 0;
             nowyTabIndex++;
+
         }
 
     }
 
 
-    for(int k = 0; k < y; k++){                 //wpisuje nowa tablice do starej
+    for(int k = 0; k < n; k++){                 //wpisuje nowa tablice do starej
 
-        tab[x][k] = nowyTab[k];
+        tab[k] = nowyTab[k];
 
     }
 
 }
 
-void wstaw(int liczba, int x, int y, char tab[x][y]){
+void wstaw(int liczba, int n, unsigned char tab[n]){
 
-    for(int i = 0; i < y; i++){
+    for(int i = 0; i < n; i++){
 
-        if(tab[x][i] == 0){
-            tab[x][i] = liczba;
+        if(tab[i] == 0){
+
+            tab[i] = liczba;
             break;
+
         }
 
     }
@@ -77,85 +83,61 @@ void wstaw(int liczba, int x, int y, char tab[x][y]){
 
 void oblicz_podzbiory(char zbior[], char n){
 
-    int kolumny = (int)pow(2,n), wiersze = n;
+    unsigned char podzbiory[n];
 
-    char podzbiory[kolumny][wiersze];
+    for(int l = 0; l < n; l++){                         //zerowanie miejsc tablicy
 
-    for(int zX = 0; zX < kolumny; zX++){            //zerowanie miejsc tablicy
+        podzbiory[l] = 0;
 
-        for(int zY = 0; zY < wiersze; zY++){
-
-            podzbiory[zX][zY] = 0;
-
-        }
     }
 
+    printf("Podzbiory:\n");
 
-    for(int i = 1; i < kolumny; i++){               //obliczanie podzbiorow
+    printf("{%c} ", 157);
 
-        for(int j = 1; j <= wiersze; j++){
+    for(int i = 1; i < (int)pow(2,n); i++){
 
-            if(!(czy_liczba_jest_w_tablicy(zbior[n-j], i, wiersze, podzbiory))){
+        for(int j = 1; j <= n; j++){                  //obliczanie podzbiorow
 
-                wstaw(zbior[n-j], i, wiersze, podzbiory);
+            if(!(czy_liczba_jest_w_tablicy(zbior[n-j], n, podzbiory))){
+
+                wstaw(zbior[n-j], n, podzbiory);
                 break;
 
             }
             else{
 
-                usuwanie_wiekszych(zbior[n-(j+1)], i, wiersze, podzbiory);
+                usuwanie_wiekszych(zbior[n-(j+1)], n, podzbiory);
 
             }
 
         }
-        if(i+1 < kolumny){
-
-            for(int k = 0; k < wiersze; k++){
-
-                podzbiory[i+1][k] = podzbiory[i][k];
-
-            }
-
-        }
-    }
-
-    podzbiory[0][0] = 157;                           //znak pustego zbioru
-
-    printf("Podzbiory:\n");
-
-    for(int zX = 0; zX < kolumny; zX++){             //wypisywanie tablicy
 
         printf("{");
 
-        for(int zY = 0; zY < wiersze; zY++){
+        for(int m = 0; m < n; m++){
 
-            if(podzbiory[zX][zY] != 0){
-                if(zX)
-                    printf("%d", podzbiory[zX][zY]);
-                else
-                    printf("%c", podzbiory[zX][zY]);
-            }
+            if(podzbiory[m])
+                printf("%d", podzbiory[m]);             //wypisywanie / jezeli 0, to nie wypisuje
 
         }
 
-        printf("}, ");
-
+        printf("} ");
     }
-
 }
 
 int main(){
 
-    char n;
+    unsigned char n;
 
     printf("Podaj dlugosc zbioru:\n");
-    scanf("%d", &n);
+    scanf("%hhu", &n);
 
-    char zbior[n];
+    unsigned char zbior[n];
 
-    for(int i=1; i <= n; i++){
+    for(int i=0; i < n; i++){
 
-        zbior[i-1] = i;
+        zbior[i] = i+1;
     }
 
     printf("\nZbior:\n");
@@ -170,6 +152,6 @@ int main(){
 
     oblicz_podzbiory(zbior, n);
 
-    return EXIT_SUCCESS;
+    return 0;
 
 }
