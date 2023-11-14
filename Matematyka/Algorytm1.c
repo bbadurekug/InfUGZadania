@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<math.h>
 
-int czy_liczba_jest_w_tablicy(int cyfra, int x, int y, int tab[x][y]){
+int czy_liczba_jest_w_tablicy(int cyfra, int x, int y, char tab[x][y]){
 
     char jest = 0;
 
@@ -18,7 +18,7 @@ int czy_liczba_jest_w_tablicy(int cyfra, int x, int y, int tab[x][y]){
 
 }
 
-void usuwanie_wiekszych(int cyfra, int x , int y, int tab[x][y]){
+void usuwanie_wiekszych(int cyfra, int x , int y, char tab[x][y]){
 
     char wieksze[y];
 
@@ -62,7 +62,7 @@ void usuwanie_wiekszych(int cyfra, int x , int y, int tab[x][y]){
 
 }
 
-void wstaw(int liczba, int x, int y, int tab[x][y]){
+void wstaw(int liczba, int x, int y, char tab[x][y]){
 
     for(int i = 0; i < y; i++){
 
@@ -75,11 +75,11 @@ void wstaw(int liczba, int x, int y, int tab[x][y]){
 
 }
 
-void oblicz_podzbiory(char zbior[], int n){
+void oblicz_podzbiory(char zbior[], char n){
 
     int kolumny = (int)pow(2,n), wiersze = n;
 
-    int podzbiory[kolumny][wiersze];
+    char podzbiory[kolumny][wiersze];
 
     for(int zX = 0; zX < kolumny; zX++){            //zerowanie miejsc tablicy
 
@@ -146,8 +146,9 @@ void oblicz_podzbiory(char zbior[], int n){
 
 int main(){
 
-    int n;
+    char n;
 
+    printf("Podaj dlugosc zbioru:\n");
     scanf("%d", &n);
 
     char zbior[n];
