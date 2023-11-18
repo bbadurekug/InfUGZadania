@@ -24,9 +24,6 @@ int main(){
 
         for(int j = 0; j < (dlugoscN/2); j++){
 
-            //printf("%d ", (n / (int)pow(10, dlugoscN-1-j))%10);
-            //printf("%d\n", (n % (int)pow(10, j+1)) / (int)pow(10, j));
-
             if(((n / (int)pow(10, dlugoscN-1-j))%10) == ((n % (int)pow(10, j+1)) / (int)pow(10, j))){
 
                 czyPalindrom += 1;
@@ -49,7 +46,6 @@ int main(){
             for(int k = 0; k < dlugoscN; k++){
 
                 palindrom = palindrom * 10 + ((n % (int)pow(10, k+1)) / (int)pow(10, k));
-                //printf("%d\n", palindrom);
 
             }
 
@@ -57,7 +53,6 @@ int main(){
 
             palindrom = 0;
 
-            //printf("%d\n", n);
             proby++;
             goto jeszczeRaz;
         }
