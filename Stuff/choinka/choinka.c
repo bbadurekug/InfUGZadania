@@ -8,18 +8,20 @@ int main() {
     HDC hdc = GetDC(console);
 
     int red = 0;
-    int green = 250;
-    int blue = 0;
-    COLORREF zielony = RGB(red, green, blue);
+    int green = 100;
+    int blue = 20;
 
-    int x = 100;
+    int x = 500;
     int y = 10;
     int x0 = x;
 
     srand(time(NULL));
 
+    COLORREF bialy = RGB(255,255,255);
 
-    for(int i = 0; i < 50; i++){
+    int wysokosc = 75 + (rand()%51);
+
+    for(int i = 0; i < wysokosc; i++){
 
         for(int k = 0; k < 5; k++){
 
@@ -28,7 +30,15 @@ int main() {
 
             for(int j = 0; j < i*2; j++){
 
-                SetPixel(hdc, x0, y, zielony);
+                if(rand() % 10 == 0)
+                    SetPixel(hdc, x0, y, bialy);
+                else{
+                    green = 50 + (rand()%75);
+
+                    COLORREF zielony = RGB(red, green, blue);
+
+                    SetPixel(hdc, x0, y, zielony);
+                }
 
                 x0++;
             }
@@ -40,21 +50,25 @@ int main() {
 
     }
 
-    red = 150;
-    green = 75;
+    COLORREF ciemnyBrazowy = RGB(90, 60, 50);
 
-    COLORREF brazowy = RGB(red, green, blue);
+    COLORREF brazowy = RGB(127,81,18);
 
-    y+=19;
-    x+=49;
+    int wysokoscPnia = wysokosc/3;
 
-    for(int o = 0; o < 20; o++){
+    y+=wysokoscPnia-1;
+    x+=wysokosc-1;
 
-        x0 = x - 10;
+    for(int o = 0; o < wysokoscPnia; o++){
 
-        for(int p = 0; p < 20; p++){
+        x0 = x - (wysokoscPnia/2);
 
-            SetPixel(hdc, x0, y, brazowy);
+        for(int p = 0; p < wysokoscPnia; p++){
+
+            if(rand() % 4 == 0)
+                SetPixel(hdc, x0, y, ciemnyBrazowy);
+            else
+                SetPixel(hdc, x0, y, brazowy);
 
             x0++;
 
@@ -66,8 +80,6 @@ int main() {
 
 
     ReleaseDC(console, hdc);
-
-    printf("\n\n");
 
     getchar();
 
