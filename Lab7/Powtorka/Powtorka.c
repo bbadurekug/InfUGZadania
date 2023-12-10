@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-#define SIZE    5
+#define SIZE    10
 
 int n = 0;
 
@@ -76,33 +76,109 @@ int sumaElementow(char* pTab){
     return (n != 0)? suma: -1;
 }
 
-typedef struct korzen{
+typedef struct drzewo{
 
+    int index;
     char ojciec;
-    char* lewySyn;
-    char* prawySyn;
+    int lewySyn;
+    int prawySyn;
 
-} Korzen;
 
+} Drzewo;
 
 void drzewoBinarne(char* pTab){
 
-    Korzen drzewo[n];
+    int i = 0;
 
-    for(int i = 0; i < n; i++){
+    Drzewo drzewo[n];
 
-        drzewo[i].ojciec = *(pTab+i);
-        drzewo[i].lewySyn = NULL;
-        drzewo[i].prawySyn = NULL;
+    for(int j = 0; j < n; j++){
 
-        if(i != 0){
-
-
-
-        }
+        drzewo[j].index = j;
+        drzewo[j].ojciec = *(pTab+j);
+        drzewo[j].lewySyn = -1;
+        drzewo[j].prawySyn = -1;
 
     }
 
+    for(int j = 1; j < n; j++){
+
+        int sprawdzana = 0;
+
+        while(sprawdzana != -1){
+
+            //printf("porownuje %d %d\n", j, sprawdzana);
+
+            if(*(pTab+j) < pTab[sprawdzana]){
+                //printf("%d mniejsze\n", j);
+                if(drzewo[sprawdzana].lewySyn == -1){
+                    drzewo[sprawdzana].lewySyn = j;
+                    sprawdzana = -1;
+                }
+                else{
+                    sprawdzana = drzewo[sprawdzana].lewySyn;
+                }
+            }
+            else{
+                //printf("%d wieksze\n", j);
+                if(drzewo[sprawdzana].prawySyn == -1){
+                    drzewo[sprawdzana].prawySyn = j;
+                    sprawdzana = -1;
+                }
+                else{
+                    sprawdzana = drzewo[sprawdzana].prawySyn;
+                }
+            }
+        }
+    }
+
+    for(int i = 0; i < n; i++){
+
+        printf("ojciec:%c lewy:%d prawy:%d\n", drzewo[i].ojciec, drzewo[i].lewySyn, drzewo[i].prawySyn);
+
+
+    }
+
+    printf("          %c \n", drzewo[i].ojciec);
+
+    int ileSpacji = 9;
+    int ileWypisywac = 1;
+    int ileWypisano = 0;
+
+    for(int i = 0; i < n; i++){
+
+        if(ileWypisano == 0){
+            for(int s = 0; s < ileSpacji; s++)
+                printf(" ");
+        ileSpacji--;
+        }
+
+
+        int j;
+
+        j = drzewo[i].lewySyn;
+
+        if(drzewo[i].lewySyn != -1)
+            printf("%c ", drzewo[j].ojciec);
+        else
+            printf("  ");
+
+        j = drzewo[i].prawySyn;
+
+        if(drzewo[i].prawySyn != -1)
+            printf("%c ", drzewo[j].ojciec);
+        else
+            printf("  ");
+
+        ileWypisano++;
+
+        if(ileWypisano == ileWypisywac){
+            printf("\n");
+            ileWypisywac *= 2;
+            ileWypisano = 0;
+        }
+
+    }
 
 }
 
