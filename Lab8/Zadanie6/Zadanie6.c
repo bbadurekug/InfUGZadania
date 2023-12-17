@@ -149,6 +149,20 @@ void sortowaniePrzezSelekcje(int tab[]){
 
 }
 
+int rosnaco(const void * a, const void * b){
+
+    int _a = *(int*)a;
+    int _b = *(int*)b;
+
+    if(_a < _b)
+        return -1;
+    else if (_a > _b)
+        return 1;
+    else
+        return 0;
+
+}
+
 void tabRand(int tab[]){
 
     for(int i = 0; i < size; i++)
@@ -156,62 +170,60 @@ void tabRand(int tab[]){
 
 }
 
+struct timespec timeStart = {0.0}, timeEnd = {0,0};
+
+void czasFunkcjiSort(void(*funkcja)(int*), int tab[]){
+
+    clock_gettime(CLOCK_MONOTONIC, &timeStart);
+    funkcja(tab);
+    clock_gettime(CLOCK_MONOTONIC, &timeEnd);
+    printf("%lld\n", (long long int)(timeEnd.tv_nsec- timeStart.tv_nsec));
+}
+
+void czasFunkcjiSearch(void(*funkcja)(int*, int), int tab[], int n){
+
+    clock_gettime(CLOCK_MONOTONIC, &timeStart);
+    funkcja(tab, n);
+    clock_gettime(CLOCK_MONOTONIC, &timeEnd);
+    printf("%lld\n", (long long int)(timeEnd.tv_nsec- timeStart.tv_nsec));
+}
+
 int main(){
 
     int *tablica = NULL;
-
     srand(time(NULL));
-
     int n = rand();
 
-    struct timespec timeStart = {0.0}, timeEnd = {0,0};
-
-    while(size < 100000){
+    while(size < 10000){
 
         tablica = malloc(sizeof(int) * size);
 
         printf("\nDla %d elementow\n\n", size);
 
         tabRand(tablica);
-
-        clock_gettime(CLOCK_MONOTONIC, &timeStart);
-        przeszukiwanieLiniowe(tablica, n);
-        clock_gettime(CLOCK_MONOTONIC, &timeEnd);
-        printf("Liniowe czas: %lld\n", (long long int)(timeEnd.tv_nsec- timeStart.tv_nsec));
-
-        sortowaniePrzezSelekcje(tablica);
-
-        clock_gettime(CLOCK_MONOTONIC, &timeStart);
-        przeszukiwanieBinarne(tablica, n);
-        clock_gettime(CLOCK_MONOTONIC, &timeEnd);
-        printf("Binarne czas: %lld\n", (long long int)(timeEnd.tv_nsec- timeStart.tv_nsec));
-
+        printf("Liniowe czas: ");
+        czasFunkcjiSearch(&przeszukiwanieLiniowe, tablica, n);
+        qsort(tablica, size, sizeof(int), rosnaco);
         tabRand(tablica);
-
-        clock_gettime(CLOCK_MONOTONIC, &timeStart);
-        sortowanieBabelkowe(tablica);
-        clock_gettime(CLOCK_MONOTONIC, &timeEnd);
-        printf("Babelkowe czas: %lld\n", (long long int)(timeEnd.tv_nsec- timeStart.tv_nsec));
-
+        printf("Binarne czas: ");
+        czasFunkcjiSearch(&przeszukiwanieBinarne, tablica, n);
         tabRand(tablica);
-
-        clock_gettime(CLOCK_MONOTONIC, &timeStart);
-        sortowaniePrzezWstawienie(tablica);
-        clock_gettime(CLOCK_MONOTONIC, &timeEnd);
-        printf("Wstawianie czas: %lld\n", (long long int)(timeEnd.tv_nsec- timeStart.tv_nsec));
-
+        printf("Babelkowe czas: ");
+        czasFunkcjiSort(&sortowanieBabelkowe, tablica);
         tabRand(tablica);
-
-        clock_gettime(CLOCK_MONOTONIC, &timeStart);
-        sortowaniePrzezSelekcje(tablica);
-        clock_gettime(CLOCK_MONOTONIC, &timeEnd);
-        printf("Selekcja czas: %lld\n", (long long int)(timeEnd.tv_nsec- timeStart.tv_nsec));
+        printf("Wstawianie czas: ");
+        czasFunkcjiSort(&sortowaniePrzezWstawienie, tablica);
+        tabRand(tablica);
+        printf("Selekcja czas: ");
+        czasFunkcjiSort(&sortowaniePrzezSelekcje, tablica);
 
         size *= 10;
 
         free(tablica);
 
     }
+
+    printf("\n\nCzas podany w nanosekundach\n\n");
 
     return 0;
 

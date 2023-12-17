@@ -5,7 +5,7 @@
 #define FALSE   0
 #define TRUE    1
 
-int size = 1000;
+int size = 50000;
 
 void sortowanieBabelkowe(int tab[]){
 
@@ -13,7 +13,7 @@ void sortowanieBabelkowe(int tab[]){
     int j;
     int temp = 0;
 
-    while(i != -1){  //raczej -1
+    while(i != -1){
 
         j = 0;
 
@@ -104,7 +104,7 @@ void tabRand(int tab[]){
 
 }
 
-int flaga(const void * a, const void * b){
+int malejaco(const void * a, const void * b){
 
     int _a = *(int*)a;
     int _b = *(int*)b;
@@ -118,80 +118,55 @@ int flaga(const void * a, const void * b){
 
 }
 
+struct timespec timeStart = {0.0}, timeEnd = {0,0};
+
+void czasFunkcji(void(*funkcja)(int*), int tab[]){
+
+    clock_gettime(CLOCK_MONOTONIC, &timeStart);
+    funkcja(tab);
+    clock_gettime(CLOCK_MONOTONIC, &timeEnd);
+    printf("%lld\n", (long long int)(timeEnd.tv_sec- timeStart.tv_sec));
+}
+
 int main(){
 
     int *tablica = NULL;
-
     srand(time(NULL));
-
     int n = rand();
-
-    struct timespec timeStart = {0.0}, timeEnd = {0,0};
-
 
     tablica = malloc(sizeof(int) * size);
 
     printf("\nDla %d losowych elementow\n\n", size);
     tabRand(tablica);
-
-    clock_gettime(CLOCK_MONOTONIC, &timeStart);
-    sortowanieBabelkowe(tablica);
-    clock_gettime(CLOCK_MONOTONIC, &timeEnd);
-    printf("Babelkowe czas: %lld\n", (long long int)(timeEnd.tv_nsec- timeStart.tv_nsec));
-
+    printf("Babelkowe czas: ");
+    czasFunkcji(&sortowanieBabelkowe, tablica);
     tabRand(tablica);
-
-    clock_gettime(CLOCK_MONOTONIC, &timeStart);
-    sortowaniePrzezWstawienie(tablica);
-    clock_gettime(CLOCK_MONOTONIC, &timeEnd);
-    printf("Wstawianie czas: %lld\n", (long long int)(timeEnd.tv_nsec- timeStart.tv_nsec));
-
+    printf("Wstawianie czas: ");
+    czasFunkcji(&sortowaniePrzezWstawienie, tablica);
     tabRand(tablica);
-
-    clock_gettime(CLOCK_MONOTONIC, &timeStart);
-    sortowaniePrzezSelekcje(tablica);
-    clock_gettime(CLOCK_MONOTONIC, &timeEnd);
-    printf("Selekcja czas: %lld\n", (long long int)(timeEnd.tv_nsec- timeStart.tv_nsec));
-
+    printf("Selekcja czas: ");
+    czasFunkcji(&sortowaniePrzezSelekcje, tablica);
 
     printf("\nDla %d posortowanych elementow\n\n", size);
-
-    clock_gettime(CLOCK_MONOTONIC, &timeStart);
-    sortowanieBabelkowe(tablica);
-    clock_gettime(CLOCK_MONOTONIC, &timeEnd);
-    printf("Babelkowe czas: %lld\n", (long long int)(timeEnd.tv_nsec- timeStart.tv_nsec));
-
-    clock_gettime(CLOCK_MONOTONIC, &timeStart);
-    sortowaniePrzezWstawienie(tablica);
-    clock_gettime(CLOCK_MONOTONIC, &timeEnd);
-    printf("Wstawianie czas: %lld\n", (long long int)(timeEnd.tv_nsec- timeStart.tv_nsec));
-
-    clock_gettime(CLOCK_MONOTONIC, &timeStart);
-    sortowaniePrzezSelekcje(tablica);
-    clock_gettime(CLOCK_MONOTONIC, &timeEnd);
-    printf("Selekcja czas: %lld\n", (long long int)(timeEnd.tv_nsec- timeStart.tv_nsec));
-
+    printf("Babelkowe czas: ");
+    czasFunkcji(&sortowanieBabelkowe, tablica);
+    printf("Wstawianie czas: ");
+    czasFunkcji(&sortowaniePrzezWstawienie, tablica);
+    printf("Selekcja czas: ");
+    czasFunkcji(&sortowaniePrzezSelekcje, tablica);
 
     printf("\nDla %d odwrotnie posortowanych elementow\n\n", size);
-    qsort(tablica, size, sizeof(int), flaga);
-
-    clock_gettime(CLOCK_MONOTONIC, &timeStart);
-    sortowanieBabelkowe(tablica);
-    clock_gettime(CLOCK_MONOTONIC, &timeEnd);
-    printf("Babelkowe czas: %lld\n", (long long int)(timeEnd.tv_nsec- timeStart.tv_nsec));
-
-    clock_gettime(CLOCK_MONOTONIC, &timeStart);
-    sortowaniePrzezWstawienie(tablica);
-    clock_gettime(CLOCK_MONOTONIC, &timeEnd);
-    printf("Wstawianie czas: %lld\n", (long long int)(timeEnd.tv_nsec- timeStart.tv_nsec));
-
-    clock_gettime(CLOCK_MONOTONIC, &timeStart);
-    sortowaniePrzezSelekcje(tablica);
-    clock_gettime(CLOCK_MONOTONIC, &timeEnd);
-    printf("Selekcja czas: %lld\n", (long long int)(timeEnd.tv_nsec- timeStart.tv_nsec));
+    qsort(tablica, size, sizeof(int), malejaco);
+    printf("Babelkowe czas: ");
+    czasFunkcji(&sortowanieBabelkowe, tablica);
+    printf("Wstawianie czas: ");
+    czasFunkcji(&sortowaniePrzezWstawienie, tablica);
+    printf("Selekcja czas: ");
+    czasFunkcji(&sortowaniePrzezSelekcje, tablica);
 
     free(tablica);
 
+    printf("\n\nCzas podany w sekundach\n\n");
 
     return 0;
 
