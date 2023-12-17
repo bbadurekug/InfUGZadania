@@ -159,8 +159,10 @@ int main(){
     qsort(tablica, size, sizeof(int), malejaco);
     printf("Babelkowe czas: ");
     czasFunkcji(&sortowanieBabelkowe, tablica);
+    qsort(tablica, size, sizeof(int), malejaco);
     printf("Wstawianie czas: ");
     czasFunkcji(&sortowaniePrzezWstawienie, tablica);
+    qsort(tablica, size, sizeof(int), malejaco);
     printf("Selekcja czas: ");
     czasFunkcji(&sortowaniePrzezSelekcje, tablica);
 
