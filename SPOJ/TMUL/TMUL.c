@@ -4,6 +4,11 @@
 void mnozenieStringow(char *string1, int len1, char *string2, int len2){
 
     char wyniki[len2][len1+2];
+
+    for(int i = 0; i < len2; i++)
+        for(int j = 0; j < len1+2; j++)
+            wyniki[i][j] = 0;
+
     int surplus = 0;
     //-48 do liczb
 
@@ -34,10 +39,15 @@ void mnozenieStringow(char *string1, int len1, char *string2, int len2){
             wyniki[i][len1] = '\0';
 
         //printf("ostateczny wynik: %s\n", wyniki[i]);
+        surplus = 0;
 
     }
 
     char wynik[len1 + len2 + 2];
+
+    for(int i = 0; i < len1+ len2 + 2; i++)
+        wynik[i] = 0;
+
     surplus = 0;
     int offset = 0;
 
@@ -51,8 +61,10 @@ void mnozenieStringow(char *string1, int len1, char *string2, int len2){
         for(int j = 0; j < len2; j++){
 
             //printf("dodaje %d do %d j: %d\n", wynik[i], wyniki[j][i-offset] - 48, i-offset);
-            if((i-offset >= 0 && i-offset <= len1 + 1) && wyniki[j][i-offset] != 0)
+
+            if((i-offset >= 0 && i-offset <= len1 + 1) && wyniki[j][i-offset] != 0){
                 wynik[i] += (wyniki[j][i-offset] - 48);
+            }
 
             offset++;
         }
@@ -114,7 +126,7 @@ int main(){
             if(i == size1){
 
                 size1 *= 2;
-                realloc(input1, sizeof(char) * size1 + 1);
+                input1 = realloc(input1, sizeof(char) * size1 + 1);
 
             }
 
@@ -124,7 +136,7 @@ int main(){
 
         input1[i] = '\0';
 
-        printf("%s [%d]", input1, i);
+        //printf("%s [%d]", input1, i);
 
         size2 = 2;
 
@@ -147,7 +159,7 @@ int main(){
             if(j == size2){
 
                 size2 *= 2;
-                realloc(input2, sizeof(char) * size2 + 1);
+                input2 = realloc(input2, sizeof(char) * size2 + 1);
 
             }
 
@@ -157,7 +169,7 @@ int main(){
 
         input2[j] = '\0';
 
-        printf("%s [%d]\n", input2, j);
+        //printf("%s [%d]\n", input2, j);
 
         if(input1[0] - 48 == 0 || input2[0] - 48 == 0)
             printf("0\n");
