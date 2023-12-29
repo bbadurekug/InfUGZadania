@@ -1,6 +1,55 @@
 #include<stdio.h>
 #include<stdlib.h>
 
+char* dodawanieStringow(char *string1, int len1, char *string2, int len2){
+
+    char* wynik = malloc(sizeof(char) * (len1 + 2));
+
+    for(int i = 0; i < len1 + 2; i++)
+        wynik[i] = 0;
+
+    short surplus = 0;
+
+    for(int i = 0; i < len1 + 1; i++){
+
+        wynik[i] = surplus;
+        surplus = 0;
+
+            if((wyniki[j][i] != 0){
+                //printf("do %d dodaje %d\n", wynik[i], wyniki[j][i] - 48,);
+                wynik[i] += wyniki[j][i] - 48;
+
+                if(wynik[i] > 9){
+
+                    surplus += wynik[i] / 10;
+                    wynik[i] %= 10;
+
+                }
+
+            }
+
+        }
+
+        wynik[i] += 48;
+        //printf("surplus: %d wynik: %c\n", surplus, wynik[i]);
+
+    }
+
+    if(wynik[len1 + len2] == 48 && wynik[len1 + len2 - 1] == 48)
+        wynik[len1 + len2 - 1] = '\0';
+    else if(wynik[len1 + len2] == 48 && wynik[len1 + len2 - 1] != 48)
+        wynik[len1 + len2] = '\0';
+
+
+    /*for(int i = len1 + len2 - 2; i >= 0; i--)
+        printf("%c", wynik[i]);
+
+    printf("\n");*/
+
+    return wynik;
+
+}
+
 char* mnozenieStringow(char *string1, int len1, char *string2, int len2){
 
     char wyniki[len2][len1+2];
@@ -43,7 +92,7 @@ char* mnozenieStringow(char *string1, int len1, char *string2, int len2){
 
     }
 
-    char wynik[len1 + len2 + 2];
+    char* wynik = malloc(sizeof(char) * (len1 + len2 + 2));
 
     for(int i = 0; i < len1+ len2 + 2; i++)
         wynik[i] = 0;
@@ -81,12 +130,13 @@ char* mnozenieStringow(char *string1, int len1, char *string2, int len2){
 
     }
 
-    /*if(wynik[len1 + len2] != 48)
-        printf("%c%c", wynik[len1 + len2], wynik[len1 + len2 - 1]);
+    if(wynik[len1 + len2] == 48 && wynik[len1 + len2 - 1] == 48)
+        wynik[len1 + len2 - 1] = '\0';
     else if(wynik[len1 + len2] == 48 && wynik[len1 + len2 - 1] != 48)
-        printf("%c", wynik[len1 + len2 - 1]);
+        wynik[len1 + len2] = '\0';
 
-    for(int i = len1 + len2 - 2; i >= 0; i--)
+
+    /*for(int i = len1 + len2 - 2; i >= 0; i--)
         printf("%c", wynik[i]);
 
     printf("\n");*/
@@ -122,12 +172,15 @@ void karatsuba(char *string1, int len1, char *string2, int len2){
 
     //printf("\n%d %d\n", len1 - srodek, len2 - srodek);
 
-    char* aStep = NULL, bStep = NULL, cStep = NULL;
+    char* aStep = mnozenieStringow(string1, len1 - srodek, string2, len2 - srodek);
+    char* bStep = mnozenieStringow(string1 + len1 - srodek, srodek, string2 + len2 - srodek, srodek);
 
-    aStep = mnozenieStringow(string1, len1 - srodek, string2, len2 - srodek);
-    bStep = mnozenieStringow(string1 + len1 - srodek, len1 - srodek, string2 + len2 - srodek, len1-srodek);
+    printf("\n%s\n%s\n", aStep, bStep);
 
-    printf("\n%s\n%s", aStep, bStep);
+    char* cStep = mnozenieStringow()
+
+    free(aStep);
+    free(bStep);
 }
 
 int main(){
