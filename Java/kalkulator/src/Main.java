@@ -6,8 +6,19 @@ import calculator.Calculator;
 public class Main {
     public static void main(String[] args) {
 
-        Calculator cals = new Calculator();
+        Calculator calc = new Calculator();
 
+        calc.setState(5);
+
+        calc.div(5);
+
+        calc.setMemory();
+
+        calc.setState(3);
+
+        calc.add(calc.getMemory());
+
+        System.out.println(calc.getState());
 
     }
 }
