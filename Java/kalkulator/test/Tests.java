@@ -33,10 +33,10 @@ public class Tests {
 
         Calculator calc = new Calculator();
 
-        calc.setState(-10);
-        calc.add(10);
+        calc.setState(2147483647);
+        calc.add(1);
 
-        Assertions.assertEquals(calc.getState(), 0);
+        Assertions.assertEquals(calc.getState(), -2147483648);
 
     }
 
@@ -69,10 +69,10 @@ public class Tests {
 
         Calculator calc = new Calculator();
 
-        calc.setState(100000000);
-        calc.mult(0);
+        calc.setState(100);
+        calc.mult(100);
 
-        Assertions.assertEquals(calc.getState(), 0);
+        Assertions.assertEquals(calc.getState(), 10000);
 
     }
 
@@ -198,5 +198,3 @@ public class Tests {
 
     }
 }
-
-

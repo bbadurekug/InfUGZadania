@@ -5,24 +5,35 @@ public class Calculator {
     private int memory = 0;
 
     public int getState() {
-        return state;
+        return this.state;
     }
 
     public void setState(int state) {
         this.state = state;
     }
 
+    private boolean checkOverflow(int value){
+        if (this.state > 0 && value > 0 && this.state + value < 0 ||
+                this.state < 0 && value < 0 && this.state + value > 0){
+            return true;
+        }
+        return false;
+    }
+
     public void add(int value){
-        state += value;
+        if (checkOverflow(value)){
+            System.out.println("Overflow!");
+        }
+        this.state += value;
     }
 
     public void mult(int value){
-        state *= value;
+        this.state *= value;
     }
 
     public void div(int value){
         if (value != 0) {
-            state /= value;
+            this.state /= value;
         }
         else{
             System.out.println("Error: Division by zero!");
@@ -31,7 +42,7 @@ public class Calculator {
 
     public void mod(int value){
         if(value!=0) {
-            state %= value;
+            this.state %= value;
         }
         else{
             System.out.println("Error: Modulo by zero!");
@@ -39,15 +50,15 @@ public class Calculator {
     }
 
     public void setMemory(){
-        memory = state;
+        this.memory = this.state;
     }
 
     public int getMemory(){
-        return memory;
+        return this.memory;
     }
 
     public void clearMemory(){
-        memory = 0;
+        this.memory = 0;
     }
 
 }
