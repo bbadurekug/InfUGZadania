@@ -22,9 +22,11 @@ public class Calculator {
 
     public void add(int value){
         if (checkOverflow(value)){
-            System.out.println("Overflow!");
+            System.out.println("Overflow! Operation was not performed.");
         }
-        this.state += value;
+        else {
+            this.state += value;
+        }
     }
 
     public void mult(int value){
@@ -34,7 +36,7 @@ public class Calculator {
     public void square(){
 
         if(this.state * this.state < 0) {
-            System.out.println("Overflow!");
+            System.out.println("Overflow! Operation was not performed.");
         }
         else {
             this.state *= this.state;
@@ -46,7 +48,7 @@ public class Calculator {
             this.state %= value;
         }
         else{
-            System.out.println("Error: Modulo by zero!");
+            System.out.println("Error: Modulo by zero! Operation cannot be performed.");
         }
     }
 

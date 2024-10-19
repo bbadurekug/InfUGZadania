@@ -36,7 +36,7 @@ class Tests {
         calc.setState(2147483647);
         calc.add(1);
 
-        Assertions.assertEquals(calc.getState(), -2147483648);
+        Assertions.assertEquals(calc.getState(), 2147483647);
 
     }
 
