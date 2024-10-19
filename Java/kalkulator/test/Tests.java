@@ -2,10 +2,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import calculator.Calculator;
 
-class Tests {
+class TestCalculator {
 
     @Test
-    public void testAddition1() {
+    public void testAdditionPositive() {
 
         Calculator calc = new Calculator();
 
@@ -17,7 +17,7 @@ class Tests {
     }
 
     @Test
-    public void testAddition2() {
+    public void testAdditionNegative() {
 
         Calculator calc = new Calculator();
 
@@ -29,7 +29,7 @@ class Tests {
     }
 
     @Test
-    public void testAddition3() {
+    public void testAdditionOverflow() {
 
         Calculator calc = new Calculator();
 
@@ -41,7 +41,7 @@ class Tests {
     }
 
     @Test
-    public void testMultiplication1() {
+    public void testMultiplicationNegative() {
 
         Calculator calc = new Calculator();
 
@@ -53,11 +53,11 @@ class Tests {
     }
 
     @Test
-    public void testMultiplication2() {
+    public void testMultiplicationZero() {
 
         Calculator calc = new Calculator();
 
-        calc.setState(0);
+        calc.setState(10);
         calc.mult(0);
 
         Assertions.assertEquals(calc.getState(), 0);
@@ -65,7 +65,7 @@ class Tests {
     }
 
     @Test
-    public void testMultiplication3() {
+    public void testMultiplicationPositive() {
 
         Calculator calc = new Calculator();
 
@@ -77,7 +77,7 @@ class Tests {
     }
 
     @Test
-    public void testSquare1() {
+    public void testSquarePositive() {
 
         Calculator calc = new Calculator();
 
@@ -89,7 +89,7 @@ class Tests {
     }
 
     @Test
-    public void testSquare2() {
+    public void testSquareNegative() {
 
         Calculator calc = new Calculator();
 
@@ -101,7 +101,7 @@ class Tests {
     }
 
     @Test
-    public void testSquare3() {
+    public void testSquareOverflow() {
 
         Calculator calc = new Calculator();
 
@@ -113,7 +113,7 @@ class Tests {
     }
 
     @Test
-    public void testModulo1() {
+    public void testModuloZero() {
 
         Calculator calc = new Calculator();
 
@@ -125,7 +125,7 @@ class Tests {
     }
 
     @Test
-    public void testModulo2() {
+    public void testModuloWithRest() {
 
         Calculator calc = new Calculator();
 
@@ -137,7 +137,7 @@ class Tests {
     }
 
     @Test
-    public void testModulo3() {
+    public void testModuloNoRest() {
 
         Calculator calc = new Calculator();
 
@@ -149,7 +149,7 @@ class Tests {
     }
 
     @Test
-    public void testMemory1() {
+    public void testMemoryMod() {
 
         Calculator calc = new Calculator();
 
@@ -167,7 +167,7 @@ class Tests {
     }
 
     @Test
-    public void testMemory2() {
+    public void testMemoryMultiplication() {
 
         Calculator calc = new Calculator();
 
@@ -185,7 +185,7 @@ class Tests {
     }
 
     @Test
-    public void testMemory3() {
+    public void testMemoryClear() {
 
         Calculator calc = new Calculator();
 
