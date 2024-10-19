@@ -12,7 +12,7 @@ public class Calculator {
         this.state = state;
     }
 
-    private boolean checkOverflow(int value){
+    private boolean checkAddOverflow(int value){
         if (this.state > 0 && value > 0 && this.state + value < 0 ||
                 this.state < 0 && value < 0 && this.state + value > 0){
             return true;
@@ -20,8 +20,18 @@ public class Calculator {
         return false;
     }
 
+    private boolean checkMultiplicationOverflow(int value){
+
+        if (this.state > 0 && value > 0 && this.state * value < 0 ||
+                this.state < 0 ^ value < 0 && this.state * value > 0){
+            return true;
+        }
+        return false;
+
+    }
+
     public void add(int value){
-        if (checkOverflow(value)){
+        if (checkAddOverflow(value)){
             System.out.println("Overflow! Operation was not performed.");
         }
         else {
@@ -30,7 +40,12 @@ public class Calculator {
     }
 
     public void mult(int value){
-        this.state *= value;
+        if(checkMultiplicationOverflow(value)){
+            System.out.println("Overflow! Operation was not performed.");
+        }
+        else {
+            this.state *= value;
+        }
     }
 
     public void square(){

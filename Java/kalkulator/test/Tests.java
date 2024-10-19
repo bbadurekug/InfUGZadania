@@ -65,14 +65,14 @@ class TestCalculator {
     }
 
     @Test
-    public void testMultiplicationPositive() {
+    public void testMultiplicationOverflow() {
 
         Calculator calc = new Calculator();
 
-        calc.setState(100);
-        calc.mult(100);
+        calc.setState(1000000);
+        calc.mult(1000000);
 
-        Assertions.assertEquals(calc.getState(), 10000);
+        Assertions.assertEquals(calc.getState(), 1000000);
 
     }
 
