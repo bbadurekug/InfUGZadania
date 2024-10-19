@@ -2,7 +2,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import calculator.Calculator;
 
-public class Tests {
+class Tests {
 
     @Test
     public void testAddition1() {
@@ -77,38 +77,38 @@ public class Tests {
     }
 
     @Test
-    public void testDivision1() {
+    public void testSquare1() {
 
         Calculator calc = new Calculator();
 
-        calc.setState(12);
-        calc.div(0);
+        calc.setState(4);
+        calc.square();
 
-        Assertions.assertEquals(calc.getState(), 12);
+        Assertions.assertEquals(calc.getState(), 16);
 
     }
 
     @Test
-    public void testDivision2() {
+    public void testSquare2() {
 
         Calculator calc = new Calculator();
 
-        calc.setState(0);
-        calc.div(2);
+        calc.setState(-5);
+        calc.square();
 
-        Assertions.assertEquals(calc.getState(), 0);
+        Assertions.assertEquals(calc.getState(), 25);
 
     }
 
     @Test
-    public void testDivision3() {
+    public void testSquare3() {
 
         Calculator calc = new Calculator();
 
-        calc.setState(16);
-        calc.div(-16);
+        calc.setState(1000000);
+        calc.square();
 
-        Assertions.assertEquals(calc.getState(), -1);
+        Assertions.assertEquals(calc.getState(), 1000000);
 
     }
 

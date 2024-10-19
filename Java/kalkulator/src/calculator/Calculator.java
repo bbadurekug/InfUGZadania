@@ -31,12 +31,13 @@ public class Calculator {
         this.state *= value;
     }
 
-    public void div(int value){
-        if (value != 0) {
-            this.state /= value;
+    public void square(){
+
+        if(this.state * this.state < 0) {
+            System.out.println("Overflow!");
         }
-        else{
-            System.out.println("Error: Division by zero!");
+        else {
+            this.state *= this.state;
         }
     }
 

@@ -8,15 +8,9 @@ public class Main {
 
         Calculator calc = new Calculator();
 
-        calc.setState(5);
+        calc.setState(1000000);
 
-        calc.div(5);
-
-        calc.setMemory();
-
-        calc.setState(3);
-
-        calc.add(calc.getMemory());
+        calc.square();
 
         System.out.println(calc.getState());
 
