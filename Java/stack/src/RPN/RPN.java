@@ -8,65 +8,92 @@ public class RPN {
 
     private Stack stack = new Stack();
 
+    private void addition(){
+
+        int num1, num2;
+        String result;
+
+        stack.pop();
+        num1 = Integer.valueOf(stack.pop());
+        num2 = Integer.valueOf(stack.pop());  
+
+        result = String.valueOf(num2 + num1);
+
+        stack.push(result);
+
+    }
+
+    private void subtraction(){
+
+        int num1, num2;
+        String result;
+
+        stack.pop();
+        num1 = Integer.valueOf(stack.pop());
+        num2 = Integer.valueOf(stack.pop());  
+
+        result = String.valueOf(num2 - num1);
+
+        stack.push(result);
+
+    }
+
+    private void multiplication(){
+
+        int num1, num2;
+        String result;
+
+        stack.pop();
+        num1 = Integer.valueOf(stack.pop());
+        num2 = Integer.valueOf(stack.pop());  
+
+        result = String.valueOf(num2 * num1);
+
+        stack.push(result);
+
+    }
+
+    private void division(){
+
+        int num1, num2;
+        String result;
+
+        stack.pop();
+        num1 = Integer.valueOf(stack.pop());
+        num2 = Integer.valueOf(stack.pop());  
+
+        result = String.valueOf(num2 / num1);
+
+        stack.push(result);
+
+    }
+
     public void calculateExpression(String input){
 
         StringTokenizer st = new StringTokenizer(input, " ");
-        int num1, num2;
-        String result;
 
         while(st.hasMoreTokens()){
 
             stack.push(st.nextToken());
             
             //zrobic oddzielne metody na dzialania
+            //wrzucic gdzies try catch
 
             switch (stack.peek()) {
                 case "+":
-
-                    stack.pop();
-                    num1 = Integer.valueOf(stack.pop());
-                    num2 = Integer.valueOf(stack.pop());  
-
-                    result = String.valueOf(num2 + num1);
-
-                    stack.push(result);
-
+                    addition();
                     break;
 
                 case "-":
-
-                    stack.pop();
-                    num1 = Integer.valueOf(stack.pop());
-                    num2 = Integer.valueOf(stack.pop());  
-
-                    result = String.valueOf(num2 - num1);
-
-                    stack.push(result);
-
+                    subtraction();
                     break;
 
                 case "x":
-
-                    stack.pop();
-                    num1 = Integer.valueOf(stack.pop());
-                    num2 = Integer.valueOf(stack.pop());  
-
-                    result = String.valueOf(num2 * num1);
-
-                    stack.push(result);
-
+                    multiplication();
                     break;
 
                 case "/":
-
-                    stack.pop();
-                    num1 = Integer.valueOf(stack.pop());
-                    num2 = Integer.valueOf(stack.pop());  
-
-                    result = String.valueOf(num2 / num1);
-
-                    stack.push(result);
-
+                    division();
                     break;
 
                 default:
