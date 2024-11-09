@@ -1,3 +1,5 @@
+package Stack;
+
 public class Stack {
 	private String [] elements = new String[0];
 	private String [] temp = new String[0];
@@ -51,6 +53,12 @@ public class Stack {
 		if(isEmpty(this.elements)) {return "";}
 
 		return this.elements[this.elements.length - 1];
+
+	}
+
+	public int len(){
+
+		return this.elements.length;
 
 	}
 }

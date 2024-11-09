@@ -1,9 +1,9 @@
-import org.junit.jupiter.api.Test;
+import Stack.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.*;
 
 public class StackTest {
-	@Test
+	@org.junit.Test
 	public void testPopAfterPush() {
 
 		Stack stack = new Stack();
@@ -13,7 +13,7 @@ public class StackTest {
 		assertEquals("napis", result);
 	}
 
-	@Test
+	@org.junit.Test
 	public void testPopAfterTwoPushes() {
 
 		Stack stack = new Stack();
@@ -25,7 +25,7 @@ public class StackTest {
 
 	}
 
-	@Test
+	@org.junit.Test
 	public void testPopEmptyStack(){
 
 		Stack stack = new Stack();
@@ -35,7 +35,7 @@ public class StackTest {
 
 	}
 
-	@Test
+	@org.junit.Test
 	public void testPeekStack(){
 
 		Stack stack = new Stack();
@@ -46,7 +46,7 @@ public class StackTest {
 
 	}
 
-	@Test
+	@org.junit.Test
 	public void testPeekEmptyStack(){
 
 		Stack stack = new Stack();
@@ -56,7 +56,7 @@ public class StackTest {
 
 	}
 
-	@Test
+	@org.junit.Test
 	public void testPushPushPopPushPeek(){
 
 		Stack stack = new Stack();
