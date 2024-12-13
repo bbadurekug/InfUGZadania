@@ -2,44 +2,104 @@ package Basket;
 
 import Product.*;
 
+import java.util.*;
+
 public class Basket {
     
-    private Product [] products = new Product[0];
-
-    private boolean isEmpty(Product [] products){
-
-		if(products.length == 0){ return true;}
-		return false;
-
-	}
-
-    private void copyProducts(Product [] source, Product [] dest){
-
-        if(isEmpty(source) || isEmpty(dest)){return;}
-
-		int len = (source.length < dest.length)? source.length: dest.length;
-
-		for(int i = 0; i < len; i++) {
-
-			dest[i] = source[i];
-
-		}
-
-    }
+    private List<Product> products = new ArrayList<>();
 
     public void addProduct(Product product){
 
-        Product [] temp = new Product[this.products.length + 1];
-        copyProducts(products, temp);
-        temp[temp.length-1] = product;
-        products = new Product[temp.length];
-        this.products = temp;
+        this.products.add(product);
 
     }
 
-    public Product peekProduct(){
+    public Product getProduct(int index){
 
-        return this.products[this.products.length-1];
+        return this.products.get(index);
+
+    }
+
+    public void sortProductsByName(){
+
+        this.products.sort(new CompareName());
+
+    }
+
+    public void sortProductsByPrice(){
+
+        this.products.sort(new ComparePrice());
+
+    }
+
+    public void sortProducts(){
+
+        sortProductsByName();
+        sortProductsByPrice();
+
+    }
+
+    public Product getCheapest(){
+
+        sortProducts();
+        return getProduct(0);
+
+    }
+
+    public Product getMostExpensive(){
+
+        sortProducts();
+        return getProduct(this.products.size()-1);
+
+    }
+
+    public List<Product> getCheapestProducts(int n){
+
+        List<Product> result = new ArrayList<>();
+
+        for(int i = 0; i < n; i++){
+
+            result.add(this.products.get(i));
+
+        }
+
+        return result;
+
+    }
+
+    public List<Product> getMostExpensiveProducts(int n){
+
+        List<Product> result = new ArrayList<>();
+
+        for(int i = this.products.size() - 1; i >= 0; i--){
+
+            result.add(this.products.get(i));
+
+        }
+
+        return result;
+
+    }
+
+    public double sumPrice(){
+
+        double result = 0.0;
+
+        sortProducts();
+
+        //jezeli trzy podukty, trzeci najtanszy gratis
+
+        if(products.size() <= 2) result += products.get(0).getPrice();
+
+        for(int i = 1; i < products.size(); i++){
+
+            result += products.get(i).getPrice();
+
+        }
+
+        if(result >= 300.0) result *= 0.95;
+
+        return result;
 
     }
 
