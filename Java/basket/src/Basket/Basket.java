@@ -74,7 +74,7 @@ public class Basket {
 
         List<Product> result = new ArrayList<>();
 
-        for(int i = this.products.size() - 1; i >= 0; i--){
+        for(int i = this.products.size() - 1; i > (this.products.size() - 1) - n; i--){
 
             result.add(this.products.get(i));
 
@@ -100,9 +100,11 @@ public class Basket {
 
         }
 
+        //jezeli ponad 200zl darmowy kubek
+
         if(!freeCup && result >= 200.0) {
             
-            Product cup = new Product("9999", "Firmowy kubek", 0.0, 0.0);
+            Product cup = new Product("9999", "Firmowy kubek", 0.0);
             this.products.add(cup);
             freeCup = true;
         }
@@ -118,7 +120,7 @@ public class Basket {
     public void applyDiscountOnProduct(int index) throws DiscountUsedException{
 
         if(!usedDiscount30) {
-            this.products.get(index).setPrice(this.products.get(index).getPrice() * 0.7);
+            this.products.get(index).setPrice(this.products.get(index).getDiscountPrice());
             usedDiscount30 = true;
         }
         else{

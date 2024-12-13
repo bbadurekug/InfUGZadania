@@ -10,29 +10,15 @@ import static org.junit.Assert.*;
 public class TestBasket {
 
     @org.junit.Test
-    public void testBasket() {
+    public void testFillBasket() {
 
-        Product product = new Product("1234", "Czekolada", 12.4, 11.5);
+        Product product = new Product("1234", "Czekolada", 12.4);
 
-        Basket basket = new Basket();
+        Product product2 = new Product("1235", "Domek", 11.4);
 
-        basket.addProduct(product);
-
-        Product result = basket.getProduct(0);
-
-        assertEquals(product, result);
-    }
-
-    @org.junit.Test
-    public void testBasket2() {
-
-        Product product = new Product("1234", "Czekolada", 12.4, 11.5);
-
-        Product product2 = new Product("1235", "Domek", 11.4, 10.5);
-
-        Product product3 = new Product("1236", "LEGO", 100.0, 85.5);
+        Product product3 = new Product("1236", "LEGO", 100.0);
         
-        Product product4 = new Product("1237", "Opona", 100.0, 85.5);
+        Product product4 = new Product("1237", "Opona", 100.0);
 
         Basket basket = new Basket();
 
@@ -54,13 +40,13 @@ public class TestBasket {
     @org.junit.Test
     public void testPriceSum() {
 
-        Product product = new Product("1234", "Czekolada", 12.4, 11.5);
+        Product product = new Product("1234", "Czekolada", 12.4);
 
-        Product product2 = new Product("1235", "Domek", 11.4, 10.5);
+        Product product2 = new Product("1235", "Domek", 11.4);
 
-        Product product3 = new Product("1236", "LEGO", 100.0, 85.5);
+        Product product3 = new Product("1236", "LEGO", 100.0);
         
-        Product product4 = new Product("1237", "Opona", 100.0, 85.5);
+        Product product4 = new Product("1237", "Opona", 100.0);
 
         Basket basket = new Basket();
 
@@ -82,13 +68,13 @@ public class TestBasket {
     }
 
     @org.junit.Test
-    public void testMostExpensive() {
+    public void testTwoMostExpensive() {
 
-        Product product = new Product("1234", "Czekolada", 12.4, 11.5);
+        Product product = new Product("1234", "Czekolada", 12.4);
 
-        Product product2 = new Product("1235", "Domek", 11.4, 10.5);
+        Product product2 = new Product("1235", "Domek", 11.4);
         
-        Product product3 = new Product("1237", "Opona", 100.0, 85.5);
+        Product product3 = new Product("1237", "Opona", 100.0);
 
         Basket basket = new Basket();
 
@@ -106,7 +92,6 @@ public class TestBasket {
 
         expected.add(product3); //opona
         expected.add(product); //czekolada
-        expected.add(product2); //domek
 
         assertEquals(expected, result);
     }
@@ -114,7 +99,7 @@ public class TestBasket {
     @org.junit.Test
     public void testDiscount() throws DiscountUsedException {
 
-		Product product = new Product("1234", "Czekolada", 12.4, 11.5);
+		Product product = new Product("1234", "Czekolada", 12.4);
 
         Basket basket = new Basket();
 
@@ -134,7 +119,7 @@ public class TestBasket {
     @org.junit.Test
     public void testCup(){
 
-		Product product = new Product("1234", "Czekolada", 200.0, 215.0);
+		Product product = new Product("1234", "Czekolada", 200.0);
 
         Basket basket = new Basket();
 
