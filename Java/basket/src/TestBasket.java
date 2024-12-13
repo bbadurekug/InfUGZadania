@@ -1,4 +1,5 @@
 import Basket.*;
+import Basket.Basket.DiscountUsedException;
 import Product.*;
 
 import java.util.ArrayList;
@@ -9,9 +10,9 @@ import static org.junit.Assert.*;
 public class TestBasket {
 
     @org.junit.Test
-	public void testBasket() {
+    public void testBasket() {
 
-		Product product = new Product("1234", "Czekolada", 12.4, 11.5);
+        Product product = new Product("1234", "Czekolada", 12.4, 11.5);
 
         Basket basket = new Basket();
 
@@ -19,13 +20,13 @@ public class TestBasket {
 
         Product result = basket.getProduct(0);
 
-		assertEquals(product, result);
-	}
+        assertEquals(product, result);
+    }
 
     @org.junit.Test
-	public void testBasket2() {
+    public void testBasket2() {
 
-		Product product = new Product("1234", "Czekolada", 12.4, 11.5);
+        Product product = new Product("1234", "Czekolada", 12.4, 11.5);
 
         Product product2 = new Product("1235", "Domek", 11.4, 10.5);
 
@@ -47,13 +48,13 @@ public class TestBasket {
 
         Product result = basket.getProduct(2);
 
-		assertEquals(product3, result);
-	}
+        assertEquals(product3, result);
+    }
 
     @org.junit.Test
-	public void testPriceSum() {
+    public void testPriceSum() {
 
-		Product product = new Product("1234", "Czekolada", 12.4, 11.5);
+        Product product = new Product("1234", "Czekolada", 12.4, 11.5);
 
         Product product2 = new Product("1235", "Domek", 11.4, 10.5);
 
@@ -77,13 +78,13 @@ public class TestBasket {
 
         //przecena bo wiecej niz 300 zl
 
-		assertEquals(212.4, result, 0);
-	}
+        assertEquals(212.4, result, 0);
+    }
 
     @org.junit.Test
-	public void testMostExpensive() {
+    public void testMostExpensive() {
 
-		Product product = new Product("1234", "Czekolada", 12.4, 11.5);
+        Product product = new Product("1234", "Czekolada", 12.4, 11.5);
 
         Product product2 = new Product("1235", "Domek", 11.4, 10.5);
         
@@ -103,11 +104,47 @@ public class TestBasket {
 
         List<Product> expected = new ArrayList<>();
 
-        expected.add(product3);
-        expected.add(product);
-        expected.add(product2);
+        expected.add(product3); //opona
+        expected.add(product); //czekolada
+        expected.add(product2); //domek
 
-		assertEquals(expected, result);
-	}
+        assertEquals(expected, result);
+    }
     
+    @org.junit.Test
+    public void testDiscount() throws DiscountUsedException {
+
+		Product product = new Product("1234", "Czekolada", 12.4, 11.5);
+
+        Basket basket = new Basket();
+
+        basket.addProduct(product);
+
+        basket.applyDiscountOnProduct(0);
+
+        double result = basket.getProduct(0).getPrice();
+
+        //basket.applyDiscountOnProduct(0);
+
+        double expected = 12.4 * 0.7;
+
+		assertEquals(expected, result , 0);
+	}
+
+    @org.junit.Test
+    public void testCup(){
+
+		Product product = new Product("1234", "Czekolada", 200.0, 215.0);
+
+        Basket basket = new Basket();
+
+        basket.addProduct(product);
+
+        basket.sumPrice();
+
+        String result = basket.getCheapest().getName();
+
+		assertEquals("Firmowy kubek", result);
+	}
+
 }

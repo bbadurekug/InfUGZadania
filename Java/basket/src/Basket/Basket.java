@@ -8,6 +8,9 @@ public class Basket {
     
     private List<Product> products = new ArrayList<>();
 
+    boolean usedDiscount30 = false;
+    boolean freeCup = false;
+
     public void addProduct(Product product){
 
         this.products.add(product);
@@ -97,9 +100,40 @@ public class Basket {
 
         }
 
+        if(!freeCup && result >= 200.0) {
+            
+            Product cup = new Product("9999", "Firmowy kubek", 0.0, 0.0);
+            this.products.add(cup);
+            freeCup = true;
+        }
+        
+        //jezeli ponad 300zl 5% taniej
+
         if(result >= 300.0) result *= 0.95;
 
         return result;
+
+    }
+
+    public void applyDiscountOnProduct(int index) throws DiscountUsedException{
+
+        if(!usedDiscount30) {
+            this.products.get(index).setPrice(this.products.get(index).getPrice() * 0.7);
+            usedDiscount30 = true;
+        }
+        else{
+            throw new DiscountUsedException();
+        }
+
+    }
+
+    public class DiscountUsedException extends Exception{
+
+        public DiscountUsedException(){
+
+            super("Discount is already used!");
+
+        }
 
     }
 
