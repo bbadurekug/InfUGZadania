@@ -54,7 +54,49 @@ public class Army extends Asset{
 
         }
 
-        return result;
+        return result*10;
+
+    }
+
+    public int getTrainingCost(int howMany){
+
+        int result = 0;
+
+        for(int i = 0; i < howMany; i++){
+
+            result += this.soldiers.get(i).getRank();
+
+        }
+
+        return result*10;
+
+    }
+
+    public int getPartialTrainingAmount(int funds){
+
+        int result = 0;
+
+        for(int i = 0; i < this.soldiers.size(); i++){
+
+            if(result + this.soldiers.get(i).getRank() > funds / 10){
+
+                return i;
+
+            }
+            else if(result + this.soldiers.get(i).getRank() == funds / 10){
+
+                return i+1;
+
+            }
+            else{
+
+                result += this.soldiers.get(i).getRank();
+
+            }
+
+        }
+
+        return -1;
 
     }
 

@@ -71,7 +71,7 @@ public class Manager {
 
     public int trainArmy(int ID) throws GoldValueInvalidException{
 
-        int trainingCost;
+        int trainingCost = 0;
 
         //return if training failed
 
@@ -93,6 +93,34 @@ public class Manager {
         }
 
         return 1;
+
+    }
+
+    public int trainArmyPartially(int ID) throws GoldValueInvalidException{
+
+        int trainingCost = 0;
+        int howManyCanBeTrained = 0;
+
+        //return if training failed
+
+        if(ID == 1){
+
+            howManyCanBeTrained = this.army1.getPartialTrainingAmount(this.gen1.getSackValue());
+            this.army1.trainArmy(howManyCanBeTrained);
+            trainingCost = this.army1.getTrainingCost(howManyCanBeTrained);
+            this.gen1.setSackValue(this.gen1.getSackValue() - trainingCost);
+
+        }
+        else{
+
+            howManyCanBeTrained = this.army2.getPartialTrainingAmount(this.gen2.getSackValue());
+            this.army2.trainArmy(howManyCanBeTrained);
+            trainingCost = this.army2.getTrainingCost(howManyCanBeTrained);
+            this.gen2.setSackValue(this.gen2.getSackValue() - trainingCost);
+
+        }
+
+        return howManyCanBeTrained;
 
     }
 

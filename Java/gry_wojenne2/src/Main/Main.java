@@ -15,6 +15,7 @@ public class Main {
         boolean gameRunning = true;
         int choice = -1;
         int result = -1;
+        @SuppressWarnings("resource")
         Scanner input = new Scanner(System.in);
 
         System.out.println("Witaj w grze, wybierz 1 - zacznij nowa gre, 2 - zaladuj poprzednia gre");
@@ -28,6 +29,7 @@ public class Main {
         while (gameRunning){
 
             System.out.println("General 1 - Twoja kolej, masz " + man.getGeneralGold(1) + " zlota i " + man.getArmyPower(1) + " sily armii");
+            System.out.println("1 - trenuj armie, 2 - zaatakuj przeciwnika, 3 - kup zolnierza, 4 - zapisz gre, 5 - zakoncz gre");
 
             choice = input.nextInt();
 
@@ -43,7 +45,17 @@ public class Main {
                     }
                     else{
 
-                        System.out.println("Zbyt malo pieniedzy, aby wytrenowac armie");
+                        System.out.println("Zbyt malo pieniedzy, aby wytrenowac cala armie. Wytrenowac czesciowo?");
+                        System.out.println("1 - tak, 2 - nie");
+
+                        choice = input.nextInt();
+
+                        if(choice == 1){
+
+                            result = man.trainArmyPartially(1);
+                            System.out.println("Wytrenowano " + choice + " zolnierzy");
+
+                        }
 
                     }
 
@@ -70,7 +82,15 @@ public class Main {
                 case 4:
 
                     man.saveFile();
-            
+
+                    break;
+                    
+                case 5:
+
+                    gameRunning = false;
+
+                    break;
+
                 default:
                     break;
             }
@@ -78,6 +98,7 @@ public class Main {
             choice = -1;
 
             System.out.println("General 2 - Twoja kolej, masz " + man.getGeneralGold(2) + " zlota i " + man.getArmyPower(2) + " sily armii");
+            System.out.println("1 - trenuj armie, 2 - zaatakuj przeciwnika, 3 - kup zolnierza, 4 - zapisz gre, 5 - zakoncz gre");
 
             choice = input.nextInt();
 
@@ -93,7 +114,17 @@ public class Main {
                     }
                     else{
 
-                        System.out.println("Zbyt malo pieniedzy, aby wytrenowac armie");
+                        System.out.println("Zbyt malo pieniedzy, aby wytrenowac cala armie. Wytrenowac czesciowo?");
+                        System.out.println("1 - tak, 2 - nie");
+
+                        choice = input.nextInt();
+
+                        if(choice == 1){
+
+                            result = man.trainArmyPartially(2);
+                            System.out.println("Wytrenowano " + choice + " zolnierzy");
+
+                        }
 
                     }
 
@@ -113,6 +144,18 @@ public class Main {
                     man.buySoldier(2, choice);
 
                     choice = -1;
+
+                    break;
+
+                case 4:
+
+                    man.saveFile();
+
+                    break;
+                    
+                case 5:
+
+                    gameRunning = false;
 
                     break;
             

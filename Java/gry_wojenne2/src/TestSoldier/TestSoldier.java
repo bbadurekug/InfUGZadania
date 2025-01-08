@@ -15,4 +15,5 @@ public class TestSoldier {
         int result = testSoldier.getPower();
         assertEquals(200, result);
     }
+    
 }

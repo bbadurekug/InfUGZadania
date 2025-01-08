@@ -5,6 +5,7 @@ import Sack.Sack.GoldValueInvalidException;
 
 public class General {
     
+    @SuppressWarnings("unused")
     private int ID;
     private Sack gold;
 
