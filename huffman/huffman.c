@@ -200,7 +200,7 @@ void decodingTree(HeapNode* heap, int heapSize, FILE *file){
     for(int i = 0; i < heapSize; i++){
 
         fwrite(&heap[i].label, sizeof(char), 1, file);
-        fwrite(&heap[i].frequency, sizeof(char), 1, file);
+        fwrite(&heap[i].frequency, sizeof(int), 1, file);
 
     }
 
@@ -221,7 +221,17 @@ int calcHowManyBits(HeapNode* heap, int heapSize, char codes[256][256]){
 
 }
 
-int countBits(FILE *file, char codes[256][256]){
+int countBits(char codes[256][256], char fileDirectory[255]){
+
+    FILE *file = NULL;
+
+    while(file == NULL){
+
+        file = fopen(fileDirectory, "r");
+
+        if(file == NULL) printf("Plik nie istnieje\n");
+
+    }
 
     char fileData = 0;
     char buffer = 0;
@@ -254,6 +264,8 @@ int countBits(FILE *file, char codes[256][256]){
         }
 
     }
+
+    fclose(file);
 
     return bitsWrote;
 
@@ -351,8 +363,6 @@ void codingFile(){
 
     generateCodes(&heap[0], code, 0, codes);
 
-    int howManyBits = calcHowManyBits(helpHeap, howManyCharacters, codes);
-
     fclose(file);
 
 /////////////////////////////////////////////////////////////
@@ -381,13 +391,16 @@ void codingFile(){
     //printf("test  %c    test", howManyCharacters);
     decodingTree(helpHeap, howManyCharacters, outputFile);  //wpisuje heap do pliku
 
+    int howManyBits = countBits(codes, fileDirectory);
+
+    printf("how many bits %d\n", howManyBits);
+
     fwrite(&howManyBits, sizeof(int), 1, outputFile);
     //printf("   test   %d    test   ", howManyBits);
 
     fileData = 0;
     char buffer = 0;
     char bits = 0;
-    int bitsWrote = countBits(file, codes);
 
     while(fileData != EOF){
 
@@ -420,8 +433,6 @@ void codingFile(){
 
     }
 
-    printf("\n%d %d\n", howManyBits, bitsWrote);
-
     if(bits > 0){
         fwrite(&buffer, sizeof(char), 1, outputFile);
         bits = 0;
@@ -446,7 +457,9 @@ void decodingFile(){
 
     }
 
-    unsigned char buffer, howManyCharacters;
+    unsigned char buffer, howManyCharacters; //buffer uzyty do wczytywania labeli
+
+    int freqBuffer; //uzyty do wczytania ilosci
 
     int howManyBits;
 
@@ -460,9 +473,10 @@ void decodingFile(){
 
     for(int i = 0; i < (howManyCharacters * 2); i++){
 
-        fread(&buffer, sizeof(buffer), 1, inputFile);
 
         if(!labelFrequency){
+
+            fread(&buffer, sizeof(buffer), 1, inputFile);
 
             printf("%c ", (unsigned char) buffer);
 
@@ -473,9 +487,11 @@ void decodingFile(){
         }
         else if(labelFrequency){
 
-            printf("%d\n", buffer);
+            fread(&freqBuffer, sizeof(freqBuffer), 1, inputFile);
 
-            heap[(i-1)/2].frequency = buffer;
+            printf("%d\n", freqBuffer);
+
+            heap[(i-1)/2].frequency = freqBuffer;
 
             labelFrequency = 0;
 
@@ -565,9 +581,10 @@ void decodingFile(){
             }
 
             if(found){
-                howManyBits -= 8;
                 found = 0;
             }
+
+            howManyBits -= 8;
 
         }
         else{
@@ -585,7 +602,7 @@ void decodingFile(){
 
                     //Sprawdza po kolei bity - zamienic w funkcje
 
-                    printf("Comparing %s %s\n", codeBuffer, codes[helpHeap[i].label]);
+                    //printf("Comparing %s %s\n", codeBuffer, codes[helpHeap[i].label]);
 
                     if(strcmp(codeBuffer, codes[helpHeap[i].label]) == 0){
 
