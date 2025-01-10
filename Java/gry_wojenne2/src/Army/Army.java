@@ -54,7 +54,7 @@ public class Army extends Asset{
 
         }
 
-        return result*10;
+        return result;
 
     }
 
@@ -68,7 +68,7 @@ public class Army extends Asset{
 
         }
 
-        return result*10;
+        return result;
 
     }
 
@@ -78,12 +78,12 @@ public class Army extends Asset{
 
         for(int i = 0; i < this.soldiers.size(); i++){
 
-            if(result + this.soldiers.get(i).getRank() > funds / 10){
+            if(result + this.soldiers.get(i).getRank() > funds){
 
                 return i;
 
             }
-            else if(result + this.soldiers.get(i).getRank() == funds / 10){
+            else if(result + this.soldiers.get(i).getRank() == funds){
 
                 return i+1;
 
@@ -175,8 +175,6 @@ public class Army extends Asset{
         this.soldiers.remove(i);
 
     }
-
-    //improve later
 
     public Soldier getSoldier(int i){
 

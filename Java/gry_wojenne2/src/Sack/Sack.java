@@ -20,7 +20,7 @@ public class Sack extends Asset {
 
         super(generalID);
         //starting value can be changed accordingly
-        this.goldValue = 100;
+        this.goldValue = 1000;
 
     }
 

@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 public class TestArmy {
 
     @Test
-    public void TestArmies() throws ExperienceInvalidException, RankInvalidException{
+    public void TestCreateArmy() throws ExperienceInvalidException, RankInvalidException{
 
         Soldier testSoldier1 = new Soldier(1, 4);
         Soldier testSoldier2 = new Soldier(1, 2);
@@ -28,7 +28,27 @@ public class TestArmy {
 
         int result = testArmy.getArmyPower();
 
-        assertEquals(9, result);
+        assertEquals(result, 9);
 
     }
+
+    @Test
+    public void TestAfterLoss() throws ExperienceInvalidException, RankInvalidException{
+
+        Soldier testSoldier1 = new Soldier(2, 4);
+        Soldier testSoldier2 = new Soldier(3, 2);
+
+        Army testArmy = new Army(1);
+
+        testArmy.addSoldier(testSoldier1);
+        testArmy.addSoldier(testSoldier2);
+
+        testArmy.lostBattle(); // 8 + 6 -> 6 + 3
+
+        int result = testArmy.getArmyPower();
+
+        assertEquals(result, 9);
+
+    }
+
 }
