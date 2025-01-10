@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <windows.h>
 
 /*void openFile(FILE *file, int function){
 
@@ -377,11 +378,15 @@ void codingFile(){
 
     }
 
+    char outputDirectory[255];
+
+    snprintf(outputDirectory, sizeof(outputDirectory), "%s.bin", fileDirectory);
+
     FILE *outputFile = NULL;
 
     while(outputFile == NULL){
 
-        outputFile = fopen("./output.bin", "wb");
+        outputFile = fopen(outputDirectory, "wb");
 
         if(outputFile == NULL) printf("Plik nie istnieje, podaj sciezke jeszcze raz\n");
 
@@ -449,9 +454,14 @@ void decodingFile(){
 
     FILE *inputFile = NULL;
 
+    char fileDirectory[255];
+
     while(inputFile == NULL){
 
-        inputFile = fopen("./output.bin", "rb");
+        printf("Podaj sciezke pliku .bin\n");
+        scanf("%s", fileDirectory);
+
+        inputFile = fopen(fileDirectory, "rb");
 
         if(inputFile == NULL) printf("Plik nie istnieje, podaj sciezke jeszcze raz\n");
 
@@ -530,9 +540,13 @@ void decodingFile(){
 
     FILE *outputFile = NULL;
 
+    char outputDirectory[255];
+
+    snprintf(outputDirectory, sizeof(outputDirectory), "%s.txt", fileDirectory);
+
     while(outputFile == NULL){
 
-        outputFile = fopen("./output.txt", "w");
+        outputFile = fopen(outputDirectory, "w");
 
         if(outputFile == NULL) printf("Plik nie istnieje, podaj sciezke jeszcze raz\n");
 
@@ -639,6 +653,9 @@ void decodingFile(){
 //       x
 
 int main(){
+
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
 
     int choice = 0;
 
