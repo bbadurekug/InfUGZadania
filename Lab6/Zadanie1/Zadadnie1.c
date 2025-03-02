@@ -9,17 +9,30 @@ int silnia(int n){
 
 }
 
+int nwd(int a, int b){
+
+    if(b > a){
+        b += a;
+        a = b - a;
+        b -= a;
+    }
+    if(a == b)
+        return a;
+    else
+        a = nwd(a-b, b);
+
+}
+
+
 int main(){
 
-    printf("Podaj liczbe:\n");
+    printf("Podaj dwie liczby:\n");
 
-    int n;
+    int a,b;
 
-    scanf("%d", &n);
+    scanf("%d %d", &a, &b);
 
-    //printf("%d", n);
-
-    printf("%d! to %d", n, silnia(n));
+    printf("Najwiekszy wspolny dzielnik liczb %d i %d to %d.", a, b, nwd(a,b));
 
     return 0;
 
