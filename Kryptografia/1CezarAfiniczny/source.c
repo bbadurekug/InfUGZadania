@@ -6,6 +6,17 @@
 
 int nwd(int a, int b){
 
+    int temp;
+
+    while (a % b != 0){
+
+        temp = b;
+        b = a % b;
+        a = temp;
+
+    }
+
+    return b;
     //dodac algorytm na nwd
 
 }
@@ -141,9 +152,32 @@ void odszyfrowanie(char type){
 
         //to check if the key is correct
 
-        //printf("%d %d\n", factor, offset);
+        printf("%d %d %d\n", factor, offset, nwd(26, factor));
 
-        int revFactor = 0;
+        if(nwd(26, factor) != 1){
+
+            fprintf(stderr, "NWD(26,a) nie jest rowny 1!");
+            return;
+
+        }
+
+        int revFactor = -1;
+
+        for(int i = 0; i < 26; i++){
+
+            if(revFactor == -1 && (factor * i) % 26 == 1){
+
+                revFactor = i;
+
+            }
+            else if(revFactor != -1 && (factor * i) % 26 == 1){
+
+                fprintf(stderr, "Istnieje wiele odwrotnych liczb!");
+                return;
+
+            }
+
+        }
 
         for(int i = 0; i < strlen(input) - 1; i++){
 
