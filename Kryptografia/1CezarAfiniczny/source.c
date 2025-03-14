@@ -152,7 +152,7 @@ void odszyfrowanie(char type){
 
         //to check if the key is correct
 
-        printf("%d %d %d\n", factor, offset, nwd(26, factor));
+        //printf("%d %d %d\n", factor, offset, nwd(26, factor));
 
         if(nwd(26, factor) != 1){
 
@@ -232,6 +232,110 @@ void odszyfrowanie(char type){
 
 }
 
+void kryptogram(char type){
+
+    FILE *crypto = NULL;
+    crypto = fopen("./crypto.txt", "r");
+
+    //zrobic tak zeby string.h wykrywalo dlugosc tekstu
+
+    char* input;
+    int inputSize = 1;
+    input = malloc(inputSize * sizeof(char));
+
+    char inputChar = '\0';
+
+    while(inputChar != '\n' && inputChar != EOF){
+
+        inputChar = fgetc(crypto);
+        input[inputSize - 1] = inputChar;
+        input = realloc(input, inputSize++ * sizeof(char));
+
+    }
+
+    input[inputSize - 1] = '\0';
+
+    FILE *decrypt = NULL;
+
+    decrypt = fopen("./decrypt.txt", "w");
+
+    char* inputCopy;
+    inputCopy = malloc(strlen(input) + 1);
+
+    if(type == 'a'){
+
+        int dividers[] = {1, 3, 5, 7, 9, 11, 15, 17, 19, 21, 23, 25};
+
+        strcpy(inputCopy, input);
+
+        for(int i = 0; i < 12; i++){
+
+            for(int offset = 0; offset < 26; offset++){
+
+                if(i == 0 && offset == 0) offset = 1;
+
+                for(int j = 0; j < strlen(input) - 1; j++){
+
+                    if(inputCopy[j] >= 65 && inputCopy[j] <= 90){
+
+                        inputCopy[j] = ((((inputCopy[j] - 65 - offset) * dividers[i]) % 26 + 26) % 26) + 65;
+
+                    }
+                    else if(inputCopy[j] >= 97 && inputCopy[j] <= 122){
+
+                        inputCopy[j] = ((((inputCopy[j] - 97 - offset) * dividers[i]) % 26 + 26) % 26) + 97;
+
+                    }
+
+                }
+
+                fprintf(decrypt, "%s", inputCopy);
+                printf("%s", inputCopy);
+                strcpy(inputCopy, input);
+
+            }
+
+        }
+
+    }
+    else{
+
+        for(int offset = 1; offset < 26; offset++){
+
+            for(int i = 0; i < strlen(input) - 1; i++){
+
+                if(input[i] >= 65 && input[i] <= 90){
+
+                    input[i] = (((input[i] - 65 - 1) % 26 + 26) % 26) + 65;
+
+                }
+                else if(input[i] >= 97 && input[i] <= 122){
+
+                    input[i] = (((input[i] - 97 - 1) % 26 + 26) % 26) + 97;
+
+                }
+
+            }
+
+            fprintf(decrypt, "%s", input);
+            //printf("%s", input);
+
+        }
+
+    }
+
+    decrypt = NULL;
+    crypto = NULL;
+
+    free(inputCopy);
+    free(input);
+
+}
+
+void jawny(char type){
+
+}
+
 int main(int argc, char *argv[]){
 
     if(argc != 3){
@@ -290,11 +394,15 @@ int main(int argc, char *argv[]){
 
             printf("Kryptoanaliza w oparciu na kryptogram\n");
 
+            kryptogram(type);
+
             break;
 
         case 'j':
 
             printf("Kryptoanaliza z tekstem jawnym\n");
+
+            jawny(type);
 
             break;
 
