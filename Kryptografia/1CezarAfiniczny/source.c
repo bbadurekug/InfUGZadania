@@ -310,7 +310,7 @@ void kryptogram(char type){
                 }
 
                 fprintf(decrypt, "%s", inputCopy);
-                printf("%s", inputCopy);
+                //printf("%s", inputCopy);
                 strcpy(inputCopy, input);
 
             }
