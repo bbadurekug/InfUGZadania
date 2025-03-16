@@ -58,8 +58,8 @@ void przygotowanie(){
 
     fprintf(plain, "%s\n", inputPlain);
 
-    orig = NULL;
-    plain = NULL;
+    fclose(orig);
+    fclose(plain);
 
     free(input);
     free(inputPlain);
@@ -68,9 +68,137 @@ void przygotowanie(){
 
 void szyfrowanie(){
 
+    FILE *plain = NULL;
+    plain = fopen("./plain.txt", "r");
+
+    char* input;
+    int inputSize = 1;
+    input = malloc(inputSize * sizeof(char));
+
+    char inputChar = '\0';
+
+    while(inputChar != '\n' && inputChar != EOF){
+
+        inputChar = fgetc(plain);
+        input = realloc(input, inputSize++ * sizeof(char));
+        input[inputSize - 2] = inputChar;
+
+    }
+
+    input[inputSize - 1] = '\0';
+
+    printf("%s", input);
+
+    FILE *key = NULL;
+    key = fopen("./key.txt", "r");
+
+    char* keys;
+    int keysSize = 1;
+    keys = malloc(keysSize * sizeof(char));
+
+    int index = 0;
+    int inputNumber;
+
+    while(fscanf(key, "%d", &inputNumber) == 1){
+
+        keys[index] = inputNumber % 26;
+        keys = realloc(keys, ++keysSize * sizeof(char));
+        printf("%d ", keys[index++]);
+
+    }
+
+    keys = realloc(keys, --keysSize * sizeof(char));
+
+    printf("\n%d\n", keysSize);
+
+    for(int i = 0; i < strlen(input) - 1; i++){
+
+        input[i] = input[i] + keys[i % keysSize];
+
+    }
+
+    printf("%s", input);
+
+    FILE *crypto = NULL;
+
+    crypto = fopen("./crypto.txt", "w");
+
+    fprintf(crypto, "%s", input);
+
+    fclose(plain);
+    fclose(key);
+    fclose(crypto);
+
+    free(input);
+    free(keys);
+
 }
 
 void odszyfrowanie(){
+
+    FILE *crypto = NULL;
+    crypto = fopen("./crypto.txt", "r");
+
+    char* input;
+    int inputSize = 1;
+    input = malloc(inputSize * sizeof(char));
+
+    char inputChar = '\0';
+
+    while(inputChar != '\n' && inputChar != EOF){
+
+        inputChar = fgetc(crypto);
+        input = realloc(input, inputSize++ * sizeof(char));
+        input[inputSize - 2] = inputChar;
+
+    }
+
+    input[inputSize - 1] = '\0';
+
+    printf("%s", input);
+
+    FILE *key = NULL;
+    key = fopen("./key.txt", "r");
+
+    char* keys;
+    int keysSize = 1;
+    keys = malloc(keysSize * sizeof(char));
+
+    int index = 0;
+    int inputNumber;
+
+    while(fscanf(key, "%d", &inputNumber) == 1){
+
+        keys[index] = inputNumber % 26;
+        keys = realloc(keys, ++keysSize * sizeof(char));
+        printf("%d ", keys[index++]);
+
+    }
+
+    keys = realloc(keys, --keysSize * sizeof(char));
+
+    printf("\n%d\n", keysSize);
+
+    for(int i = 0; i < strlen(input) - 1; i++){
+
+        input[i] = input[i] - keys[i % keysSize];
+
+    }
+
+    printf("%s", input);
+
+    FILE *decrypt = NULL;
+
+    decrypt = fopen("./decrypt.txt", "w");
+
+    fprintf(decrypt, "%s", input);
+
+    fclose(crypto);
+    fclose(key);
+    fclose(decrypt);
+
+    free(input);
+    free(keys);
 
 }
 
