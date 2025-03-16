@@ -1,0 +1,27 @@
+@charset "UTF-8";
+
+table, th, td {
+	border: 1px solid black;
+	width: 300px !important;
+	text-align: center;
+}
+
+img {
+	border: 5px solid black;
+}
+
+caption {
+	text-align: center;
+}
+
+body {
+	padding-left: 250px;
+}
+
+fieldset {
+	position: fixed;
+	padding-left: 0px;
+	left: 0;
+	width: 200px;
+
+}
