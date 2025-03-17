@@ -4,6 +4,23 @@
 #include<stdlib.h>
 #include<string.h>
 
+int nwd(int a, int b){
+
+    int temp;
+
+    while (a % b != 0){
+
+        temp = b;
+        b = a % b;
+        a = temp;
+
+    }
+
+    return b;
+    //dodac algorytm na nwd
+
+}
+
 void przygotowanie(){
 
     FILE *orig = NULL;
@@ -113,7 +130,9 @@ void szyfrowanie(){
 
     for(int i = 0; i < strlen(input) - 1; i++){
 
-        input[i] = input[i] + keys[i % keysSize];
+        //input[i] = input[i] + keys[i % keysSize];
+
+        input[i] = ((input[i] - 97 + keys[i % keysSize]) % 26) + 97;
 
     }
 
@@ -181,7 +200,9 @@ void odszyfrowanie(){
 
     for(int i = 0; i < strlen(input) - 1; i++){
 
-        input[i] = input[i] - keys[i % keysSize];
+        //input[i] = input[i] - keys[i % keysSize];
+
+        input[i] = (((input[i] - 97 - keys[i % keysSize]) % 26 + 26) % 26) + 97;
 
     }
 
@@ -203,6 +224,103 @@ void odszyfrowanie(){
 }
 
 void kryptogram(){
+
+    FILE *crypto = NULL;
+    crypto = fopen("./crypto.txt", "r");
+
+    char* input;
+    int inputSize = 1;
+    input = malloc(inputSize * sizeof(char));
+
+    char inputChar = '\0';
+
+    while(inputChar != '\n' && inputChar != EOF){
+
+        inputChar = fgetc(crypto);
+        input = realloc(input, inputSize++ * sizeof(char));
+        input[inputSize - 2] = inputChar;
+
+    }
+
+    input[inputSize - 1] = '\0';
+
+    //printf("%s", input);
+
+    //szukanie paternow i co ile sie powtarzaja
+
+    int* hitsTable = NULL;
+    int hitsSize = 1;
+    hitsTable = malloc(hitsSize * sizeof(int));
+
+    int nChars = 4;
+
+    for(int i = 0; i < strlen(input) - nChars - 1; i++){
+
+        char pattern[nChars+2];
+
+        for(int j = 0; j < nChars; j++){
+
+            pattern[j] = input[j + i];
+
+        }
+
+        pattern[nChars + 1] = '\0';
+
+        //printf("%d: %s\n", i, pattern);
+
+        for(int j = i + nChars; j < strlen(input) - 1; j++){
+
+            int hits = 0;
+
+            for(int k = 0; k < nChars; k++){
+
+                //printf("%c %c %d\n", pattern[k], input[j], k);
+
+                if(pattern[k] == input[j]){
+
+                    hits++;
+                    j++;
+
+                }
+                else{
+
+                    break;
+
+                }
+
+            }
+
+            if(hits == nChars){
+
+                printf("TRAF! %s %d\n", pattern, (j - nChars) - i);
+
+                hitsTable[hitsSize - 1] = (j - nChars) - i;
+                hitsTable = realloc(hitsTable, ++hitsSize * sizeof(int));
+
+                break;
+
+            }
+
+        }
+
+    }
+
+    hitsTable = realloc(hitsTable, --hitsSize * sizeof(int));
+
+    //najmniejszy wspolny dzielnik ZLE POWINIEN BYC NAJWIEKSZY WSPOLNY DZIELNIK
+
+    int gcd = nwd(hitsTable[0], hitsTable[1]);
+
+    for(int i = 2; i < hitsSize; i++){
+
+        gcd = nwd(gcd, hitsTable[i]);
+
+    }
+
+    printf("The key length is most likely %d", gcd);
+
+    free(input);
+    free(hitsTable);
 
 }
 
