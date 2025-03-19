@@ -3,6 +3,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<math.h>
 
 int nwd(int a, int b){
 
@@ -317,7 +318,85 @@ void kryptogram(){
 
     }
 
-    printf("The key length is most likely %d", gcd);
+    printf("The key length is most likely %d\n", gcd);
+
+    int letterFrequency[26] = {82, 15, 28, 43, 127, 22, 20, 61, 70, 2, 8, 40, 24, 67, 75, 29, 1, 60, 63, 91, 28, 10, 23, 1, 20, 1};
+
+    int letterFrequencyInput[26];
+    int letterCount = 0;
+
+    float diff = 0;
+
+    float letterFrequencyResults[gcd][26];
+
+    for(int i = 0; i < gcd; i++){
+
+        for(int j = 0; j < 26; j++){
+
+            for(int m = 0; m < 26; m++){
+
+                letterFrequencyInput[m] = 0;
+
+            }
+
+            diff = 0.0;
+            letterCount = 0;
+
+            for(int k = 0; k < strlen(input) - 1; k++){
+
+                if(k % gcd == i){
+
+                    letterFrequencyInput[(input[k] - 97 - j) % 26 + 26 % 26]++;
+                    letterCount++;
+
+                }
+
+            }
+
+            printf("\n");
+
+            for(int n = 0; n < 26; n++){
+
+                //printf("%c %f %f\n", n + 'a', (float)letterFrequency[n] / 1000, (float)letterFrequencyInput[n] / letterCount);
+
+                diff += ((float)letterFrequency[n] / 1000) * ((float)letterFrequencyInput[n] / letterCount);
+
+                //printf("%c %f\n", n + 'a', diff);
+
+            }
+
+            printf("%d %f\n", j, diff);
+
+            letterFrequencyResults[i][j] = diff;
+
+        }
+
+    }
+
+    float max = 0;
+    int index = -1;
+
+    printf("The keys are most likely");
+
+    for(int i = 0; i < gcd; i++){
+
+        max = 0;
+        index = -1;
+
+        for(int j = 0; j < 26; j++){
+
+            if(letterFrequencyResults[i][j] > max){
+
+                max = letterFrequencyResults[i][j];
+                index = j;
+
+            }
+
+        }
+
+        printf(" %d", index);
+
+    }
 
     free(input);
     free(hitsTable);
