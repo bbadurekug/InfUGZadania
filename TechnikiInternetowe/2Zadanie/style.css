@@ -1,9 +1,20 @@
 @charset "UTF-8";
 
+.page_title {
+    border: 2px solid black;
+    position: fixed;
+    top: 0;
+    left: 200px;
+    padding-left: 0px;
+    padding-top: 0px;
+    width: 
+}
+
 table, th, td {
 	border: 1px solid black;
 	width: 300px !important;
 	text-align: center;
+    background-color: #efefe9;
 }
 
 img {
@@ -15,13 +26,44 @@ caption {
 }
 
 body {
-	padding-left: 250px;
+    padding-left: 25vh;
+    font-family: Trebuchet MS, sans-serif;
+    background-color: #f8f0c6;
 }
 
 fieldset {
+    border: 0px;
+    height: 0px;
+    text-align: center;
+}
+
+nav { 
 	position: fixed;
 	padding-left: 0px;
-	left: 0;
+	top: 5vh;
+    left: 1px;
 	width: 200px;
+    background-color: #f6e8b1;
+    height: 95vh;
+    border: 2px solid #000000;
+    font-size: 20px;
+    line-height: 2;
+}
 
+legend {
+    position: fixed;
+    top: 0;
+    left: 1px;
+    width: 198px;
+    height: 5vh;
+    padding-left: 0px;
+    background-color: #f6e8b1;
+    border: 2px solid #000000;
+    font-size: 30px;
+    color: #000000;
+    font-weight: bold;
+}
+
+.no_underline_link {
+    text-decoration: none;
 }
