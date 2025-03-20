@@ -18,7 +18,6 @@ int nwd(int a, int b){
     }
 
     return b;
-    //dodac algorytm na nwd
 
 }
 
@@ -43,7 +42,7 @@ void przygotowanie(){
 
     input[inputSize - 1] = '\0';
 
-    printf("%s", input);
+    //printf("%s", input);
 
     char* inputPlain;
     int inputSizePlain = 1;
@@ -68,7 +67,7 @@ void przygotowanie(){
 
     inputPlain[inputSizePlain - 1] = '\0';
 
-    printf("%s\n", inputPlain);
+    //printf("%s\n", inputPlain);
 
     FILE *plain = NULL;
 
@@ -105,7 +104,7 @@ void szyfrowanie(){
 
     input[inputSize - 1] = '\0';
 
-    printf("%s", input);
+    //printf("%s", input);
 
     FILE *key = NULL;
     key = fopen("./key.txt", "r");
@@ -119,15 +118,15 @@ void szyfrowanie(){
 
     while(fscanf(key, "%d", &inputNumber) == 1){
 
-        keys[index] = inputNumber % 26;
+        keys[index++] = inputNumber % 26;
         keys = realloc(keys, ++keysSize * sizeof(char));
-        printf("%d ", keys[index++]);
+        //printf("%d ", keys[index]);
 
     }
 
     keys = realloc(keys, --keysSize * sizeof(char));
 
-    printf("\n%d\n", keysSize);
+    //printf("\n%d\n", keysSize);
 
     for(int i = 0; i < strlen(input) - 1; i++){
 
@@ -137,7 +136,7 @@ void szyfrowanie(){
 
     }
 
-    printf("%s", input);
+    //printf("%s", input);
 
     FILE *crypto = NULL;
 
@@ -175,7 +174,7 @@ void odszyfrowanie(){
 
     input[inputSize - 1] = '\0';
 
-    printf("%s", input);
+    //printf("%s", input);
 
     FILE *key = NULL;
     key = fopen("./key.txt", "r");
@@ -189,15 +188,15 @@ void odszyfrowanie(){
 
     while(fscanf(key, "%d", &inputNumber) == 1){
 
-        keys[index] = inputNumber % 26;
+        keys[index++] = inputNumber % 26;
         keys = realloc(keys, ++keysSize * sizeof(char));
-        printf("%d ", keys[index++]);
+        //printf("%d ", keys[index]);
 
     }
 
     keys = realloc(keys, --keysSize * sizeof(char));
 
-    printf("\n%d\n", keysSize);
+    //printf("\n%d\n", keysSize);
 
     for(int i = 0; i < strlen(input) - 1; i++){
 
@@ -207,7 +206,7 @@ void odszyfrowanie(){
 
     }
 
-    printf("%s", input);
+    //printf("%s", input);
 
     FILE *decrypt = NULL;
 
@@ -253,7 +252,7 @@ void kryptogram(){
     int hitsSize = 1;
     hitsTable = malloc(hitsSize * sizeof(int));
 
-    int nChars = 4;
+    int nChars = 5;
 
     for(int i = 0; i < strlen(input) - nChars - 1; i++){
 
@@ -293,7 +292,7 @@ void kryptogram(){
 
             if(hits == nChars){
 
-                printf("TRAF! %s %d\n", pattern, (j - nChars) - i);
+                //printf("TRAF! %s %d\n", pattern, (j - nChars) - i);
 
                 hitsTable[hitsSize - 1] = (j - nChars) - i;
                 hitsTable = realloc(hitsTable, ++hitsSize * sizeof(int));
@@ -318,7 +317,7 @@ void kryptogram(){
 
     }
 
-    printf("The key length is most likely %d\n", gcd);
+    //printf("The key length is most likely %d\n", gcd);
 
     int letterFrequency[26] = {82, 15, 28, 43, 127, 22, 20, 61, 70, 2, 8, 40, 24, 67, 75, 29, 1, 60, 63, 91, 28, 10, 23, 1, 20, 1};
 
@@ -346,26 +345,27 @@ void kryptogram(){
 
                 if(k % gcd == i){
 
-                    letterFrequencyInput[(input[k] - 97 - j) % 26 + 26 % 26]++;
+                    //printf("%c\n", ((input[k] - 97 - j + 26) % 26) + 26 % 26 + 97);
+                    letterFrequencyInput[((input[k] - 97 - j + 26) % 26) + 26 % 26]++;
                     letterCount++;
 
                 }
 
             }
 
-            printf("\n");
+            //printf("\n");
 
             for(int n = 0; n < 26; n++){
 
                 //printf("%c %f %f\n", n + 'a', (float)letterFrequency[n] / 1000, (float)letterFrequencyInput[n] / letterCount);
 
-                diff += ((float)letterFrequency[n] / 1000) * ((float)letterFrequencyInput[n] / letterCount);
+                diff += ((float)letterFrequency[n] / 1000.0) * ((float)letterFrequencyInput[n] / (float)letterCount);
 
                 //printf("%c %f\n", n + 'a', diff);
 
             }
 
-            printf("%d %f\n", j, diff);
+            //printf("%d %f\n", j, diff);
 
             letterFrequencyResults[i][j] = diff;
 
@@ -373,10 +373,16 @@ void kryptogram(){
 
     }
 
+    FILE *keyFound = NULL;
+
+    keyFound = fopen("./key-found.txt", "w");
+
     float max = 0;
     int index = -1;
 
-    printf("The keys are most likely");
+    //printf("The keys are most likely");
+
+    int keys[gcd];
 
     for(int i = 0; i < gcd; i++){
 
@@ -394,9 +400,27 @@ void kryptogram(){
 
         }
 
-        printf(" %d", index);
+        fprintf(keyFound, "%d ", index);
+        keys[i] = index;
+        //printf(" %d", index);
 
     }
+
+    for(int i = 0; i < strlen(input) - 1; i++){
+
+        input[i] = (((input[i] - 97 - keys[i % gcd]) % 26 + 26) % 26) + 97;
+
+    }
+
+    FILE *decrypt = NULL;
+
+    decrypt = fopen("./decrypt.txt", "w");
+
+    fprintf(decrypt, "%s", input);
+
+    fclose(crypto);
+    fclose(keyFound);
+    fclose(decrypt);
 
     free(input);
     free(hitsTable);
