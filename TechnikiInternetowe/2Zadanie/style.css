@@ -1,33 +1,50 @@
 @charset "UTF-8";
 
+html {
+      scroll-padding-top: 10vh;
+}
+
 .page_title {
     border: 2px solid black;
     position: fixed;
     top: 0;
-    left: 200px;
-    padding-left: 0px;
+    left: 23vh;
+    padding-left: 20px;
     padding-top: 0px;
-    width: 
+    width: 161.6vh; 
+    background-color: #f6e8b1;
+    z-index: 2;
+    text-align: center;
 }
 
 table, th, td {
-	border: 1px solid black;
-	width: 300px !important;
+	border: 1px groove black;
+	width: 300px;
 	text-align: center;
     background-color: #efefe9;
 }
 
-img {
-	border: 5px solid black;
+th {
+    background-color: #f6e8b1;
 }
+
+img {
+	border: 1px solid black;
+}
+
+figure {
+    text-align: center;
+} 
 
 caption {
 	text-align: center;
 }
 
 body {
+    position: relative;
     padding-left: 25vh;
-    font-family: Trebuchet MS, sans-serif;
+    top: 12.5vh;
+    font-family: "Trebuchet MS", sans-serif;
     background-color: #f8f0c6;
 }
 
@@ -40,9 +57,9 @@ fieldset {
 nav { 
 	position: fixed;
 	padding-left: 0px;
-	top: 5vh;
-    left: 1px;
-	width: 200px;
+	top: 9.2vh;
+    left: 0.05vh;
+	width: 23.1vh;
     background-color: #f6e8b1;
     height: 95vh;
     border: 2px solid #000000;
@@ -52,18 +69,84 @@ nav {
 
 legend {
     position: fixed;
+    display: flex;
     top: 0;
-    left: 1px;
-    width: 198px;
-    height: 5vh;
+    left: 0.05vh;
+    width: 22.9vh;
+    height: 9vh;
     padding-left: 0px;
     background-color: #f6e8b1;
     border: 2px solid #000000;
     font-size: 30px;
     color: #000000;
     font-weight: bold;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+pre {
+    border: 1px solid black;
+    background-color: #f6e8b1;
+    padding-left: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    line-height: 2;
+    font-size: 15px;
+}
+
+dt {
+    font-weight: bold;
+    padding-bottom: 5px;
+}
+
+dd::before {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    left: 27.5vh;
+    margin-top: 3px;
+    align-items: center;
+    border-radius: 50%;
+    background-color: #f6e8b1;
+    border: 1px solid black;
+}
+
+form {
+    padding-bottom: 10px;
+}
+
+input, select, textarea {
+    margin-bottom: 5px;
+    background-color: #efefe9;
+    border: 1px solid black;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.custom_button {
+    display: inline-block;
+    background-color: #efefe9;
+    cursor: pointer;
+    text-align: center;
+    border: 1px solid black;
+    font-size: 14px;
+    padding: 3px;
 }
 
 .no_underline_link {
     text-decoration: none;
+}
+
+.source_footer {
+    background-color: #f6e8b1;
+    width: 160vh;
+    padding-left: 10px;
+    padding-bottom: 10px;
+    line-height: 1.5;
+    top: 10px;
+    border: 1px solid black;
 }
