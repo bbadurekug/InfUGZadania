@@ -1,26 +1,95 @@
 let rows = 2;
 let columns = 5;
 
-const plants = new Array(rows).fill(new Array(columns));
+const plants = new Array(rows).fill().map(() => new Array(columns));
 
 for(let i = 0; i < rows; i++){
 
-	for(let j = 0; j < 5; j++){
+	for(let j = 0; j < columns; j++){
 
-		plants[i][j] = "none";
+		plants[i][j] = "None";
 
 	}
 
 }
 
-const spawnSunflower = ()=> console.log("Sunflower spawned");
+function spawnSunflower(){
+    
+    console.log(document.getElementById("rowIndex").value);
+    console.log(document.getElementById("columnIndex").value);
+    
+    row = document.getElementById("rowIndex").value;
+    column = document.getElementById("columnIndex").value;
 
-function updatePlants(){
+    if (plants[row-1][column-1] == "None") {
 
-	console.log(plants);
+        document.getElementById("row" + row).querySelector("#column" + column + "plant").innerHTML = '<img src="assets/sunflower.png" width="128" height="128" alt="Obraz przedtawiający słonecznik">'; 
+      
+        plants[row-1][column-1] = "Sunflower"
 
-	document.getElementById("row1plants").innerText = '<img src="sunflower.png">';
+        console.log("Sunflower spawned!");
+    
+    }
 
 }
 
-updatePlants();
+function spawnPea(){
+    
+    console.log(document.getElementById("rowIndex").value);
+    console.log(document.getElementById("columnIndex").value);
+    
+    row = document.getElementById("rowIndex").value;
+    column = document.getElementById("columnIndex").value;
+
+    if (plants[row-1][column-1] == "None") {
+
+        document.getElementById("row" + row).querySelector("#column" + column + "plant").innerHTML = '<img src="assets/pea.png" width="128" height="128" alt="Obraz przedtawiający groszek">'; 
+      
+        plants[row-1][column-1] = "Pea"
+
+        console.log("Pea spawned!");
+    
+    }
+
+}
+
+function spawnGarlic(){
+    
+    console.log(document.getElementById("rowIndex").value);
+    console.log(document.getElementById("columnIndex").value);
+    
+    row = document.getElementById("rowIndex").value;
+    column = document.getElementById("columnIndex").value;
+
+    if (plants[row-1][column-1] == "None") {
+
+        document.getElementById("row" + row).querySelector("#column" + column + "plant").innerHTML = '<img src="assets/garlic.png" width="128" height="128" alt="Obraz przedtawiający czosnek">'; 
+      
+        plants[row-1][column-1] = "Garlic"
+
+        console.log("Garlic spawned!");
+    
+    }
+
+}
+
+function removePlant(){
+    
+    console.log(document.getElementById("rowIndex").value);
+    console.log(document.getElementById("columnIndex").value);
+    
+    row = document.getElementById("rowIndex").value;
+    column = document.getElementById("columnIndex").value;
+
+    if (plants[row-1][column-1] != "None") {
+
+        document.getElementById("row" + row).querySelector("#column" + column + "plant").innerHTML = ""; 
+      
+        plants[row-1][column-1] = "None"
+
+        console.log("Plant removed!");
+    
+    }
+
+}
+

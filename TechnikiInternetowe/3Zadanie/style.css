@@ -9,6 +9,7 @@ body {
 	top: 0;
 	z-index: 1;
 	justify-content: center;
+    margin-bottom: 64px;
 }
 
 .tool_bar img {
@@ -17,16 +18,24 @@ body {
 	cursor: pointer;
 }
 
-.first_row {
+.row {
 	display: flex;
-	top: 256px;
-	z-index: 10;
+    position: relative;
 	justify-content: center;
 }
 
-.second_row {
-	display: flex;
-	top: 512px;
-	z-index: 10;
-	justify-content: center;
+.pot, .plant {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0px;
+    position: flex;
+    width: 128px;
+    z-index: 1;
+}
+
+.plant {
+    position: absolute;
+    bottom: 48px;
+    z-index: 2;
 }
