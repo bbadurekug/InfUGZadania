@@ -129,8 +129,6 @@ function spawnPlantRandom(plant){
     
 }
 
-
-
 function waterPlant(){
 
     console.log(document.getElementById("rowIndex").value);
@@ -157,6 +155,56 @@ function waterPlant(){
 
 }
 
+function waterPlantAll(){
+
+    for(let i = 0; i < rows; i++){
+
+	    for(let j = 0; j < columns; j++){
+
+            if(plants[i][j][1] >= 150) {
+   
+                document.getElementById("row" + (i + 1)).querySelector("#column" + (j + 1) + "plant").innerHTML = '<img src="assets/' +  plants[i][j][0] + '.png" style="scale: ' +  plants[i][j][1] + '%; bottom: ' + (-48 - (0.16 * plants[i][j][1])) + 'px; border-radius: 50%; background-color: rgba(255, 0, 0, 0.5)" alt="' + plants[i][j][0] + '">'; 
+
+                continue;
+
+            }   
+
+	    	if (plants[i][j][0] != "none") {
+                
+                plants[i][j][1] += 10;
+                updatePlant(i + 1, j + 1);
+
+            }
+
+	    }
+
+    }   
+
+}
+
+function isLastLeft(row, column) {
+
+    let lastLeft = true;
+
+    for(let i = 0; i < rows; i++){
+
+	    for(let j = 0; j < columns; j++){
+
+	    	if (!(row == i && column == j) && plants[i][j][0] != "none") {
+                
+                lastLeft = false;
+                break;
+
+            }
+
+	    }
+
+    }
+
+    return lastLeft;
+
+}
+
 function removePlant(){
 
     console.log(document.getElementById("rowIndex").value);
@@ -164,6 +212,14 @@ function removePlant(){
     
     row = document.getElementById("rowIndex").value;
     column = document.getElementById("columnIndex").value;
+    
+    if (isLastLeft(row - 1, column - 1) == true) {
+
+        plants[row-1][column-1][1] = 10;
+        updatePlant(row, column);
+        return;
+
+    }
 
     if (plants[row-1][column-1][0] != "none") {
         
