@@ -9,7 +9,6 @@ body {
 	top: 0;
 	z-index: 1;
 	justify-content: center;
-    margin-bottom: 64px;
 }
 
 .tool_bar img {
@@ -22,20 +21,31 @@ body {
 	display: flex;
     position: relative;
 	justify-content: center;
+    margin-top: 128px;
 }
 
 .pot, .plant {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: 0px;
+    gap: 0;
     position: flex;
-    width: 128px;
+    width: 188px;
     z-index: 1;
 }
 
 .plant {
     position: absolute;
     bottom: 48px;
+    display: flex;
+    height: 128px;
     z-index: 2;
+}
+
+.plant img {
+    position: absolute;
+    bottom: -32px;
+    left: 0;
+    transform: translateY(-50%);
+    height: auto;
 }
