@@ -9,15 +9,19 @@
 		<link rel="stylesheet" type="text/css" href="style.css">
 	</head>
 	<body>
+        <div id="noti" class="notification">
+            <p>Podaj grządkę i pozycję po czym wybierz jedną z roślin!</p>
+            <button onclick="buttonAction()">OK</button>
+        </div>
 		<div id="bar" class="tool_bar">
 			<img src="assets/sunflower.png" width="128" height="128" alt="Obraz przedtawiający słonecznik" onclick="spawnPlant('sunflower')">
 			<img src="assets/pea.png" width="128" height="128" alt="Obraz przedstawiający groszek" onclick="spawnPlant('pea')">
 			<img src="assets/garlic.png" width="128" height="128" alt="Obraz przedstawiający czosnek" onclick="spawnPlant('garlic')">
-			<img src="assets/can.png" width="128" height="128" alt="Obraz przedstawiający konewkę" onclick="waterPlant()">
+			<!--<img src="assets/can.png" width="128" height="128" alt="Obraz przedstawiający konewkę" onclick="waterPlant()">
 			<img src="assets/goldenCan.png" width="128" height="128" alt="Obraz przedstawiający złotą konewkę" onclick="waterPlantAll()">
             <img src="assets/shovel.png" width="128" height="128" alt="Obraz przedstawiający łopatę" onclick="removePlant()">
 			<img src="assets/fertilizer.png" width="128" height="128" alt="Obraz przedstawiający nawóz" onclick="spawnPlantRandom(getRandomPlant())">
-			<img src="assets/heal.png" width="128" height="128" alt="Obraz przedstawiający serce" onclick="healPlants()">
+            <img src="assets/heal.png" width="128" height="128" alt="Obraz przedstawiający serce" onclick="healPlants()">-->
 		</div>
 		<div id="row1" class="row">
             <div id="column1pot" class="pot">
@@ -73,8 +77,10 @@
                 <img src="assets/pot.png" width="128" height="128" alt="Obraz przedstawiający donicę na rośliny">
 		    </div>
         </div>
-        <input type="text" id="rowIndex" placeholder="Row coordinate">
-        <input type="text" id="columnIndex" placeholder="Column coordinate">
-		<script src="script.js"></script>
+        <div class="input">
+            <input type="text" id="rowIndex" placeholder="Row coordinate">
+            <input type="text" id="columnIndex" placeholder="Column coordinate">
+        </div>
+        <script src="script.js"></script>
 	</body>
 </html>

@@ -20,6 +20,55 @@ for(let i = 0; i < rows; i++){
 
 }
 
+function isFirstPlant(){
+
+    let allNone = true;
+
+    for(let i = 0; i < rows; i++){
+
+	    for(let j = 0; j < columns; j++){
+
+	    	if (plants[i][j][0] != "none") {
+                
+                allNone = false;
+                break;
+
+            }
+
+	    }
+
+    }   
+
+    return allNone;
+
+}
+
+
+let buttonState = ["start", "main", "maxSize"];
+let currentState = "start";
+
+function buttonAction(){
+
+    if (currentState == "start" && isFirstPlant() == false){
+        
+        document.getElementById("bar").innerHTML = '<img src="assets/can.png" width="128" height="128" alt="Obraz przedstawiający konewkę" onclick="waterPlant()"><img src="assets/goldenCan.png" width="128" height="128" alt="Obraz przedstawiający złotą konewkę" onclick="waterPlantAll()"><img src="assets/shovel.png" width="128" height="128" alt="Obraz przedstawiający łopatę" onclick="removePlant()"><img src="assets/fertilizer.png" width="128" height="128" alt="Obraz przedstawiający nawóz" onclick="spawnPlantRandom(getRandomPlant())"><img src="assets/heal.png" width="128" height="128" alt="Obraz przedstawiający serce" onclick="healPlants()">';
+
+        currentState = "main";
+
+        document.getElementById("noti").style.display = "none";
+
+    }
+
+    if (currentState == "maxSize"){
+    
+        currentState = "main";
+
+        document.getElementById("noti").style.display = "none";
+    
+    }
+
+}
+
 function getRandomPlant(){
     return plantsToChoose[Math.floor(Math.random() * noPlants)];
 }
@@ -53,29 +102,6 @@ function updatePlant(row, column){
 
 }
 
-function isFirstPlant(){
-
-    let allNone = true;
-
-    for(let i = 0; i < rows; i++){
-
-	    for(let j = 0; j < columns; j++){
-
-	    	if (plants[i][j][0] != "none") {
-                
-                allNone = false;
-                break;
-
-            }
-
-	    }
-
-    }   
-
-    return allNone;
-
-}
-
 function spawnPlant(plant){
     
     if (isFirstPlant() == false){
@@ -89,6 +115,12 @@ function spawnPlant(plant){
     
     row = document.getElementById("rowIndex").value;
     column = document.getElementById("columnIndex").value;
+        
+    if (!(row <= rows && row > 0) || !(column <= columns && column > 0)) {
+        
+        return;
+
+    }
 
     if (plants[row-1][column-1][0] == "none") {
         
@@ -137,9 +169,20 @@ function waterPlant(){
     row = document.getElementById("rowIndex").value;
     column = document.getElementById("columnIndex").value;
 
+    if (!(row <= rows && row > 0) || !(column <= columns && column > 0)) {
+        
+        return;
+
+    }
+
     if(plants[row-1][column-1][1] >= 150) {
    
         document.getElementById("row" + row).querySelector("#column" + column + "plant").innerHTML = '<img src="assets/' +  plants[row-1][column-1][0] + '.png" style="scale: ' +  plants[row-1][column-1][1] + '%; bottom: ' + (-48 - (0.16 * plants[row-1][column-1][1])) + 'px; border-radius: 50%; background-color: rgba(255, 0, 0, 0.5)" alt="' + plants[row-1][column-1][0] + '">'; 
+        
+        document.getElementById("noti").innerHTML = '<p>Roślina osiągnęła maksymalną wysokość!</p><button onclick="buttonAction()">OK</button>';
+        document.getElementById("noti").style.display = "flex";
+
+        currentState = "maxSize";
 
         return;
 
@@ -164,6 +207,11 @@ function waterPlantAll(){
             if(plants[i][j][1] >= 150) {
    
                 document.getElementById("row" + (i + 1)).querySelector("#column" + (j + 1) + "plant").innerHTML = '<img src="assets/' +  plants[i][j][0] + '.png" style="scale: ' +  plants[i][j][1] + '%; bottom: ' + (-48 - (0.16 * plants[i][j][1])) + 'px; border-radius: 50%; background-color: rgba(255, 0, 0, 0.5)" alt="' + plants[i][j][0] + '">'; 
+                    
+                document.getElementById("noti").innerHTML = '<p>Roślina osiągnęła maksymalną wysokość!</p><button onclick="buttonAction()">OK</button>';
+                document.getElementById("noti").style.display = "flex";
+
+                currentState = "maxSize";
 
                 continue;
 
@@ -213,6 +261,13 @@ function removePlant(){
     row = document.getElementById("rowIndex").value;
     column = document.getElementById("columnIndex").value;
     
+    if (!(row <= rows && row > 0) || !(column <= columns && column > 0)) {
+        
+        return;
+
+    }
+
+
     if (isLastLeft(row - 1, column - 1) == true) {
 
         plants[row-1][column-1][1] = 10;

@@ -4,6 +4,32 @@ body {
 	background-color: #72C132;
 }
 
+.notification {
+    display: flex;
+    position: absolute;
+    background-color: #b1b1b1;
+    border: 1px solid black;
+    left: 50%;
+    top: 50%;
+    width: 256px;
+    height: 128px;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+}
+
+.notification p {
+    text-align: center;
+}
+
+.notification button {
+    border: 1px solid black;
+    cursor: pointer;
+    width: 128px;
+}
+
 .tool_bar {
 	display: flex;
 	top: 0;
@@ -48,4 +74,14 @@ body {
     left: 0;
     transform: translateY(-50%);
     height: auto;
+}
+
+.input {
+    display: flex;
+    justify-content: center;
+    margin-top: 32px;
+}
+
+.input input {
+    border: 1px solid black;
 }
