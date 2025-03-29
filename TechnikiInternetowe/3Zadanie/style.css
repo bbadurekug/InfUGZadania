@@ -85,3 +85,12 @@ body {
 .input input {
     border: 1px solid black;
 }
+
+.credit {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    bottom: 0;
+    width: 100%;
+}
