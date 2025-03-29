@@ -91,13 +91,15 @@ void szyfrowanie(){
     FILE *keyFile = NULL;
     keyFile = fopen("./key.txt", "r");
 
-    char key[keyLength];
+    char key[keyLength + 1];
 
     for(int i = 0; i < keyLength; i++){
 
         key[i] = fgetc(keyFile);
 
     }
+
+    key[keyLength] = '\0';
 
     printf("%s\n\n", key);
 
@@ -126,9 +128,13 @@ void szyfrowanie(){
 
                 input[j] ^= key[j];
 
+                //input[j] ^= key[j];
+
+                fprintf(crypto, "%c", input[j]);
+
             }
 
-            fprintf(crypto, "%s\n", input);
+            //fprintf(crypto, "%s", input);
 
             //decryption for testing
 
@@ -160,6 +166,8 @@ void szyfrowanie(){
             //printf("%c", input[j]);
             input[j] ^= key[j];
 
+            //input[j] ^= key[j];
+
         }
 
         for(int j = 0; j < i; j++){
@@ -189,13 +197,15 @@ void kryptogram(){
     FILE *keyFile = NULL;
     keyFile = fopen("./key.txt", "r");
 
-    char key[keyLength];
+    char key[keyLength + 1];
 
     for(int i = 0; i < keyLength; i++){
 
         key[i] = fgetc(keyFile);
 
     }
+
+    key[keyLength] = '\0';
 
     /*TEST*/
 
@@ -210,15 +220,21 @@ void kryptogram(){
 
         inputChar = fgetc(crypto);
 
-        if(i == 32){
+        if(i == keyLength - 1){
+
+            input[i] = inputChar;
 
             for(int j = 0; j < keyLength; j++){
 
                 input[j] ^= key[j];
 
+                //input[j] ^= key[j];
+
+                fprintf(decrypt, "%c", input[j]);
+
             }
 
-            fprintf(decrypt, "%s\n", input);
+            fprintf(decrypt, "\n");
 
             i = 0;
 
@@ -238,6 +254,8 @@ void kryptogram(){
         for(int j = 0; j < i; j++){
 
             input[j] ^= key[j];
+
+            //input[j] ^= key[j];
 
         }
 
