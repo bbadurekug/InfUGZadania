@@ -53,8 +53,8 @@ void przygotowanie(){
         }
 
     }
-
-    inputPlain[inputSizePlain] = '\0';
+	
+    //printf("%s", inputPlain);
 
     FILE *plain = NULL;
 
@@ -62,7 +62,7 @@ void przygotowanie(){
 
     int newLine = 0;
 
-    for(int i = 0; i < strlen(inputPlain) - 1; i++){
+    for(int i = 0; i < strlen(inputPlain); i++){
 
         fputc(inputPlain[i], plain);
 
@@ -76,7 +76,7 @@ void przygotowanie(){
         }
 
     }
-
+	
     fclose(orig);
     fclose(plain);
 
@@ -372,6 +372,8 @@ void kryptogram(){
 
     }
 
+    fprintf(keyFound, "\n");
+
     for(int j = 0; j < inputArraySize - 1; j++){
 
         for(int k = 0; k < keyLength; k++){
@@ -411,6 +413,8 @@ void kryptogram(){
         fprintf(decrypt, "%c", inputArray[inputArraySize - 1][k]);
 
     }
+    
+    fprintf(decrypt, "\n");
 
     fclose(keyFound);
     fclose(crypto);
