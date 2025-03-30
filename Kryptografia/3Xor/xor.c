@@ -54,7 +54,7 @@ void przygotowanie(){
 
     }
 
-    inputPlain[inputSizePlain - 1] = '\0';
+    inputPlain[inputSizePlain] = '\0';
 
     FILE *plain = NULL;
 
@@ -101,13 +101,13 @@ void szyfrowanie(){
 
     key[keyLength] = '\0';
 
-    printf("%s\n\n", key);
+    //printf("%s\n\n", key);
 
     FILE *plain = NULL;
     plain = fopen("./plain.txt", "r");
 
     FILE *crypto = NULL;
-    crypto = fopen("./crypto.txt", "w");
+    crypto = fopen("./crypto.txt", "wb");
 
     char input[keyLength + 1];
     char inputChar;
@@ -184,57 +184,60 @@ void szyfrowanie(){
 
 }
 
+void copyArrays(char* destination, char* source, int length){
+
+    for(int i = 0; i < length; i++){
+
+        destination[i] = source[i];
+
+    }
+
+}
+
 void kryptogram(){
 
     FILE *crypto = NULL;
-    crypto = fopen("./crypto.txt", "r");
+    crypto = fopen("./crypto.txt", "rb");
 
     FILE *decrypt = NULL;
     decrypt = fopen("./decrypt.txt", "w");
 
-    /*TEST*/
+    FILE *keyFound = NULL;
+    keyFound = fopen("./key-found.txt", "w");
 
-    FILE *keyFile = NULL;
-    keyFile = fopen("./key.txt", "r");
+    char** inputArray;
+    int inputArraySize = 1;
+    inputArray = malloc(inputArraySize * sizeof(char*));
 
-    char key[keyLength + 1];
-
-    for(int i = 0; i < keyLength; i++){
-
-        key[i] = fgetc(keyFile);
-
-    }
-
-    key[keyLength] = '\0';
-
-    /*TEST*/
-
-    char input[keyLength + 1];
-    char inputChar;
-
-    input[keyLength] = '\0';
+    char input[keyLength];
+    char inputChar = '\0';
 
     int i = 0;
 
     while(inputChar != EOF){
 
+        //printf("hello");
+
         inputChar = fgetc(crypto);
 
-        if(i == keyLength - 1){
+        if(i == (keyLength - 1)){
 
             input[i] = inputChar;
 
-            for(int j = 0; j < keyLength; j++){
+            inputArray[inputArraySize - 1] = malloc(keyLength * sizeof(char));
+            copyArrays(inputArray[inputArraySize - 1], input, keyLength);
 
-                input[j] ^= key[j];
+            inputArray = realloc(inputArray, ++inputArraySize * sizeof(char*));
 
-                //input[j] ^= key[j];
+            /*for(int j = 0; j < keyLength; j++){
 
-                fprintf(decrypt, "%c", input[j]);
+                inputArray[inputArraySize - 2][j] ^= key[j];
+
+                fprintf(decrypt, "%c", inputArray[inputArraySize - 2][j]);
 
             }
 
-            fprintf(decrypt, "\n");
+            fprintf(decrypt, "\n");*/
 
             i = 0;
 
@@ -249,27 +252,177 @@ void kryptogram(){
 
     --i;
 
-    if(i != 0){
+    if(i > 0){
 
-        for(int j = 0; j < i; j++){
+        inputArray[inputArraySize - 1] = malloc(keyLength * sizeof(char));
+        copyArrays(inputArray[inputArraySize - 1], input, i);
 
-            input[j] ^= key[j];
+        /*for(int j = 0; j < i; j++){
 
-            //input[j] ^= key[j];
+            inputArray[inputArraySize - 1][j] ^= key[j];
+            fprintf(decrypt, "%c", inputArray[inputArraySize - 1][j]);
 
-        }
+        }*/
 
-        for(int j = 0; j < i; j++){
+    }
+    else{
 
-            fprintf(decrypt, "%c", input[j]);
+        inputArraySize--;
+
+    }
+
+    if(inputArraySize < 3){
+
+        fprintf(stderr, "Tekst zbyt krótki, aby odszyfrować");
+
+    }
+
+    int spaceIndex = -1;
+    char key[keyLength];
+
+    for(int j = 0; j < keyLength; j++){
+
+        key[j] = '\0';
+
+    }
+
+    for(int j = 0; j < keyLength; j++){
+
+        for(int k = 0; k < inputArraySize - 1; k++){
+
+            if((inputArray[k][j] ^ inputArray[(k + 1) % inputArraySize][j]) / 64 == 1) {
+
+                //printf("SPACJA %d %d albo %d %d: %c\n", k, j, k + 1, j, inputArray[k][j] ^ key[j]);
+
+                if((inputArray[(k + 1) % inputArraySize][j] ^ inputArray[(k + 2) % inputArraySize][j]) / 64 == 1) {
+
+                    //k + 1 jest spacja albo k i k + 2 sa spacja bo z k + 2 tez wychodzi 1
+
+                    if((inputArray[k][j] ^ inputArray[(k + 2) % inputArraySize][j]) == 0) {
+
+                        //k i k+2 to to samo, wiec nie mozna stwierdzic
+
+                        //printf("SPACJA niezdecyowana\n");
+
+                        spaceIndex = -1;
+
+                    }
+                    else{
+
+                        //k i k+2 sa rozne wiec k+1 to spacja
+
+                        //printf("SPACJA to %d %d\n", j, k + 1);
+
+                        spaceIndex = k + 1;
+
+                    }
+
+                }
+                else if((inputArray[(k + 1) % inputArraySize][j] ^ inputArray[(k + 2) % inputArraySize][j]) == 0){
+
+                    //spacja dwa razy pod rzad
+
+                    spaceIndex = -1;
+
+                }
+                else {
+
+                    //k jest spacja bo k + 1 i k + 2 nie daja 1
+
+                    //printf("SPACJA to %d %d\n", j, k);
+
+                    spaceIndex = k;
+
+                }
+
+                if(spaceIndex != -1){
+
+                    //if(k < inputArraySize - 3) k++;
+
+                    key[j] = inputArray[spaceIndex][j] ^ (1 << 5);
+
+                    //printf("klucz dla %d to %c\n", j, key[j]);
+
+                    spaceIndex = -1;
+
+                    break;
+
+                }
+
+            }
 
         }
 
     }
 
-    fclose(keyFile);
+    for(int j = 0; j < keyLength; j++){
+
+        if(key[j] == '\0'){
+
+            //printf("_");
+            fprintf(keyFound, "_");
+
+        }
+        else{
+
+            //printf("%c", key[j]);
+            fprintf(keyFound, "%c", key[j]);
+
+        }
+
+    }
+
+    for(int j = 0; j < inputArraySize - 1; j++){
+
+        for(int k = 0; k < keyLength; k++){
+
+            if(key[k] == '\0'){
+
+                inputArray[j][k] = '_';
+
+            }
+            else{
+
+                inputArray[j][k] ^= key[k];
+
+            }
+
+            fprintf(decrypt, "%c", inputArray[j][k]);
+
+        }
+
+        fprintf(decrypt, "\n");
+
+    }
+
+    for(int k = 0; k < i; k++){
+
+        if(key[k] == '\0'){
+
+            inputArray[inputArraySize - 1][k] = '_';
+
+        }
+        else{
+
+            inputArray[inputArraySize - 1][k] ^= key[k];
+
+        }
+
+        fprintf(decrypt, "%c", inputArray[inputArraySize - 1][k]);
+
+    }
+
+    fclose(keyFound);
     fclose(crypto);
     fclose(decrypt);
+
+    for(int j = 0; j < inputArraySize; j++){
+
+        free(inputArray[j]);
+
+    }
+
+    free(inputArray);
 
 }
 
