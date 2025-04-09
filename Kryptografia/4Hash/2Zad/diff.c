@@ -470,6 +470,12 @@ int main(){
 	fprintf(diff, "Liczba rozniacych sie bitow: %d z %d, procentowo %.0f%%\n", hits, b2sumLength * 4, percentage);*/
 
 	getDifference("md5sum", diff, md5sumLength, md5sumPersonal, md5sumPersonal_);
+	getDifference("sha1sum", diff, sha1sumLength, sha1sumPersonal, sha1sumPersonal_);
+	getDifference("sha224sum", diff, sha224sumLength, sha224sumPersonal, sha224sumPersonal_);
+	getDifference("sha256sum", diff, sha256sumLength, sha256sumPersonal, sha256sumPersonal_);
+	getDifference("sha384sum", diff, sha384sumLength, sha384sumPersonal, sha384sumPersonal_);
+	getDifference("sha512sum", diff, sha512sumLength, sha512sumPersonal, sha512sumPersonal_);
+	getDifference("b2sum", diff, b2sumLength, b2sumPersonal, b2sumPersonal_);
 
 	fclose(hash);
     fclose(diff);
