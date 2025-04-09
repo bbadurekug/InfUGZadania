@@ -4,13 +4,13 @@
 #include<stdlib.h>
 #include<string.h>
 
-#define md5sumLength    47
-#define sha1sumLength   55
-#define sha224sumLength 71
-#define sha256sumLength 79
-#define sha384sumLength 111
-#define sha512sumLength 143
-#define b2sumLength     143
+#define md5sumLength    32
+#define sha1sumLength   40
+#define sha224sumLength 56
+#define sha256sumLength 64
+#define sha384sumLength 96
+#define sha512sumLength 128
+#define b2sumLength     128
 
 void getHash(const char* type){
 
@@ -46,7 +46,6 @@ int main(){
     }
     else{
 
-        fclose(hash);
         system("touch hash.txt");
 
     }
@@ -67,15 +66,11 @@ int main(){
     fscanf(hash, "%s", md5sumPersonal);
     fscanf(hash, "%s", md5sumPersonal_);
 
-    printf("%s\n%s\n", md5sumPersonal, md5sumPersonal_);
-
     char sha1sumPersonal[sha1sumLength + 1];
     char sha1sumPersonal_[sha1sumLength + 1];
 
     fscanf(hash, "%s", sha1sumPersonal);
     fscanf(hash, "%s", sha1sumPersonal_);
-
-    printf("%s\n%s\n", sha1sumPersonal, sha1sumPersonal_);
 
     char sha224sumPersonal[sha224sumLength + 1];
     char sha224sumPersonal_[sha224sumLength + 1];
@@ -83,15 +78,11 @@ int main(){
     fscanf(hash, "%s", sha224sumPersonal);
     fscanf(hash, "%s", sha224sumPersonal_);
 
-    printf("%s\n%s\n", sha224sumPersonal, sha224sumPersonal_);
-
     char sha256sumPersonal[sha256sumLength + 1];
     char sha256sumPersonal_[sha256sumLength + 1];
 
     fscanf(hash, "%s", sha256sumPersonal);
     fscanf(hash, "%s", sha256sumPersonal_);
-
-    printf("%s\n%s\n", sha256sumPersonal, sha256sumPersonal_);
 
     char sha384sumPersonal[sha384sumLength + 1];
     char sha384sumPersonal_[sha384sumLength + 1];
@@ -99,15 +90,11 @@ int main(){
     fscanf(hash, "%s", sha384sumPersonal);
     fscanf(hash, "%s", sha384sumPersonal_);
 
-    printf("%s\n%s\n", sha384sumPersonal, sha384sumPersonal_);
+    char sha512sumPersonal[sha512sumLength + 1];
+    char sha512sumPersonal_[sha512sumLength + 1];
 
-    char sha1512umPersonal[sha512sumLength + 1];
-    char sha1512umPersonal_[sha512sumLength + 1];
-
-    fscanf(hash, "%s", sha1512umPersonal);
-    fscanf(hash, "%s", sha1512umPersonal_);
-
-    printf("%s\n%s\n", sha1512umPersonal, sha1512umPersonal_);
+    fscanf(hash, "%s", sha512sumPersonal);
+    fscanf(hash, "%s", sha512sumPersonal_);
 
     char b2sumPersonal[b2sumLength + 1];
     char b2sumPersonal_[b2sumLength + 1];
@@ -115,19 +102,323 @@ int main(){
     fscanf(hash, "%s", b2sumPersonal);
     fscanf(hash, "%s", b2sumPersonal_);
 
-    printf("%s\n%s\n", b2sumPersonal, b2sumPersonal_);
+	static char* hexCodes[] = {"0000", "0001", "0010", "0011", "0100", "0101", "0110", "0111", "1000", "1001", "1010", "1011", "1100", "1101", "1110", "1111"};
+	
+	FILE* diff = NULL;
+	diff = fopen("diff.txt", "w");
 
-    char hexPersonal;
-    char hexPersonal_;
+    char hexPersonal[5];
+    char hexPersonal_[5];
+	
+	fprintf(diff, "cat hash-.pdf personal.txt | md5sum\ncat hash-.pdf personal_.txt | md5sum\n%s\n%s\n", md5sumPersonal, md5sumPersonal_);
+
+	int hits = 0;
 
     for(int i = 0; i < md5sumLength; i++){
 
-        hexPersonal = md5sumPersonal[i];
-        hexPersonal_ = md5sumPersonal_[i];
+		if(md5sumPersonal[i] >= '0' && md5sumPersonal[i] <= '9'){
+
+			strcpy(hexPersonal, hexCodes[md5sumPersonal[i] - '0']);	
+	
+		}
+		else if(md5sumPersonal[i] >= 'a' && md5sumPersonal[i] <= 'f'){
+
+			strcpy(hexPersonal, hexCodes[md5sumPersonal[i] - 'a' + 10]);
+
+		}
+		
+		if(md5sumPersonal_[i] >= '0' && md5sumPersonal_[i] <= '9'){
+
+			strcpy(hexPersonal_, hexCodes[md5sumPersonal_[i] - '0']);	
+	
+		}
+		else if(md5sumPersonal_[i] >= 'a' && md5sumPersonal_[i] <= 'f'){
+
+			strcpy(hexPersonal_, hexCodes[md5sumPersonal_[i] - 'a' + 10]);
+
+		}
+		
+		hexPersonal[4] = '\0';
+		hexPersonal_[4] = '\0';
+
+		for(int j = 0; j < 4; j++){
+			
+			if(hexPersonal[j] != hexPersonal_[j]) hits++;
+
+		}
 
     }
+	
+	float percentage = (float)(hits) / (md5sumLength * 4) * 100;
 
-    fclose(hash);
+	fprintf(diff, "Liczba rozniacych sie bitow: %d z %d, procentowo %.0f%%\n\n", hits, md5sumLength * 4, percentage);
+
+
+	fprintf(diff, "cat hash-.pdf personal.txt | sha1sum\ncat hash-.pdf personal_.txt | sha1sum\n%s\n%s\n", sha1sumPersonal, sha1sumPersonal_);
+
+	hits = 0;
+
+    for(int i = 0; i < sha1sumLength; i++){
+
+		if(sha1sumPersonal[i] >= '0' && sha1sumPersonal[i] <= '9'){
+
+			strcpy(hexPersonal, hexCodes[sha1sumPersonal[i] - '0']);	
+	
+		}
+		else if(sha1sumPersonal[i] >= 'a' && sha1sumPersonal[i] <= 'f'){
+
+			strcpy(hexPersonal, hexCodes[sha1sumPersonal[i] - 'a' + 10]);
+
+		}
+		
+		if(sha1sumPersonal_[i] >= '0' && sha1sumPersonal_[i] <= '9'){
+
+			strcpy(hexPersonal_, hexCodes[sha1sumPersonal_[i] - '0']);	
+	
+		}
+		else if(sha1sumPersonal_[i] >= 'a' && sha1sumPersonal_[i] <= 'f'){
+
+			strcpy(hexPersonal_, hexCodes[sha1sumPersonal_[i] - 'a' + 10]);
+
+		}
+		
+		hexPersonal[4] = '\0';
+		hexPersonal_[4] = '\0';
+
+		for(int j = 0; j < 4; j++){
+			
+			if(hexPersonal[j] != hexPersonal_[j]) hits++;
+
+		}
+
+    }
+	
+	percentage = (float)(hits) / (sha1sumLength * 4) * 100;
+
+	fprintf(diff, "Liczba rozniacych sie bitow: %d z %d, procentowo %.0f%%\n\n", hits, sha1sumLength * 4, percentage);
+
+
+	fprintf(diff, "cat hash-.pdf personal.txt | sha224sum\ncat hash-.pdf personal_.txt | sha224sum\n%s\n%s\n", sha224sumPersonal, sha224sumPersonal_);
+
+	hits = 0;
+
+    for(int i = 0; i < sha224sumLength; i++){
+
+		if(sha224sumPersonal[i] >= '0' && sha224sumPersonal[i] <= '9'){
+
+			strcpy(hexPersonal, hexCodes[sha224sumPersonal[i] - '0']);	
+	
+		}
+		else if(sha224sumPersonal[i] >= 'a' && sha224sumPersonal[i] <= 'f'){
+
+			strcpy(hexPersonal, hexCodes[sha224sumPersonal[i] - 'a' + 10]);
+
+		}
+		
+		if(sha224sumPersonal_[i] >= '0' && sha224sumPersonal_[i] <= '9'){
+
+			strcpy(hexPersonal_, hexCodes[sha224sumPersonal_[i] - '0']);	
+	
+		}
+		else if(sha224sumPersonal_[i] >= 'a' && sha224sumPersonal_[i] <= 'f'){
+
+			strcpy(hexPersonal_, hexCodes[sha224sumPersonal_[i] - 'a' + 10]);
+
+		}
+		
+		hexPersonal[4] = '\0';
+		hexPersonal_[4] = '\0';
+
+		for(int j = 0; j < 4; j++){
+			
+			if(hexPersonal[j] != hexPersonal_[j]) hits++;
+
+		}
+
+    }
+	
+	percentage = (float)(hits) / (sha224sumLength * 4) * 100;
+
+	fprintf(diff, "Liczba rozniacych sie bitow: %d z %d, procentowo %.0f%%\n\n", hits, sha224sumLength * 4, percentage);
+    
+	
+	fprintf(diff, "cat hash-.pdf personal.txt | sha256sum\ncat hash-.pdf personal_.txt | sha256sum\n%s\n%s\n", sha256sumPersonal, sha256sumPersonal_);
+
+	hits = 0;
+
+    for(int i = 0; i < sha256sumLength; i++){
+
+		if(sha256sumPersonal[i] >= '0' && sha256sumPersonal[i] <= '9'){
+
+			strcpy(hexPersonal, hexCodes[sha256sumPersonal[i] - '0']);	
+	
+		}
+		else if(sha256sumPersonal[i] >= 'a' && sha256sumPersonal[i] <= 'f'){
+
+			strcpy(hexPersonal, hexCodes[sha256sumPersonal[i] - 'a' + 10]);
+
+		}
+		
+		if(sha256sumPersonal_[i] >= '0' && sha256sumPersonal_[i] <= '9'){
+
+			strcpy(hexPersonal_, hexCodes[sha256sumPersonal_[i] - '0']);	
+	
+		}
+		else if(sha256sumPersonal_[i] >= 'a' && sha256sumPersonal_[i] <= 'f'){
+
+			strcpy(hexPersonal_, hexCodes[sha256sumPersonal_[i] - 'a' + 10]);
+
+		}
+		
+		hexPersonal[4] = '\0';
+		hexPersonal_[4] = '\0';
+
+		for(int j = 0; j < 4; j++){
+			
+			if(hexPersonal[j] != hexPersonal_[j]) hits++;
+
+		}
+
+    }
+	
+	percentage = (float)(hits) / (sha256sumLength * 4) * 100;
+
+	fprintf(diff, "Liczba rozniacych sie bitow: %d z %d, procentowo %.0f%%\n\n", hits, sha256sumLength * 4, percentage);
+
+
+	fprintf(diff, "cat hash-.pdf personal.txt | sha384sum\ncat hash-.pdf personal_.txt | sha384sum\n%s\n%s\n", sha384sumPersonal, sha384sumPersonal_);
+
+	hits = 0;
+
+    for(int i = 0; i < sha384sumLength; i++){
+
+		if(sha384sumPersonal[i] >= '0' && sha384sumPersonal[i] <= '9'){
+
+			strcpy(hexPersonal, hexCodes[sha384sumPersonal[i] - '0']);	
+	
+		}
+		else if(sha384sumPersonal[i] >= 'a' && sha384sumPersonal[i] <= 'f'){
+
+			strcpy(hexPersonal, hexCodes[sha384sumPersonal[i] - 'a' + 10]);
+
+		}
+		
+		if(sha384sumPersonal_[i] >= '0' && sha384sumPersonal_[i] <= '9'){
+
+			strcpy(hexPersonal_, hexCodes[sha384sumPersonal_[i] - '0']);	
+	
+		}
+		else if(sha384sumPersonal_[i] >= 'a' && sha384sumPersonal_[i] <= 'f'){
+
+			strcpy(hexPersonal_, hexCodes[sha384sumPersonal_[i] - 'a' + 10]);
+
+		}
+		
+		hexPersonal[4] = '\0';
+		hexPersonal_[4] = '\0';
+
+		for(int j = 0; j < 4; j++){
+			
+			if(hexPersonal[j] != hexPersonal_[j]) hits++;
+
+		}
+
+    }
+	
+	percentage = (float)(hits) / (sha384sumLength * 4) * 100;
+
+	fprintf(diff, "Liczba rozniacych sie bitow: %d z %d, procentowo %.0f%%\n\n", hits, sha384sumLength * 4, percentage);
+	
+	
+	fprintf(diff, "cat hash-.pdf personal.txt | sha512sum\ncat hash-.pdf personal_.txt | sha512sum\n%s\n%s\n", sha512sumPersonal, sha512sumPersonal_);
+
+	hits = 0;
+
+    for(int i = 0; i < sha512sumLength; i++){
+
+		if(sha512sumPersonal[i] >= '0' && sha512sumPersonal[i] <= '9'){
+
+			strcpy(hexPersonal, hexCodes[sha512sumPersonal[i] - '0']);	
+	
+		}
+		else if(sha512sumPersonal[i] >= 'a' && sha512sumPersonal[i] <= 'f'){
+
+			strcpy(hexPersonal, hexCodes[sha512sumPersonal[i] - 'a' + 10]);
+
+		}
+		
+		if(sha512sumPersonal_[i] >= '0' && sha512sumPersonal_[i] <= '9'){
+
+			strcpy(hexPersonal_, hexCodes[sha512sumPersonal_[i] - '0']);	
+	
+		}
+		else if(sha512sumPersonal_[i] >= 'a' && sha512sumPersonal_[i] <= 'f'){
+
+			strcpy(hexPersonal_, hexCodes[sha512sumPersonal_[i] - 'a' + 10]);
+
+		}
+		
+		hexPersonal[4] = '\0';
+		hexPersonal_[4] = '\0';
+
+		for(int j = 0; j < 4; j++){
+			
+			if(hexPersonal[j] != hexPersonal_[j]) hits++;
+
+		}
+
+    }
+	
+	percentage = (float)(hits) / (sha512sumLength * 4) * 100;
+
+	fprintf(diff, "Liczba rozniacych sie bitow: %d z %d, procentowo %.0f%%\n\n", hits, sha512sumLength * 4, percentage);
+	
+	
+	fprintf(diff, "cat hash-.pdf personal.txt | b2sum\ncat hash-.pdf personal_.txt | b2sum\n%s\n%s\n", b2sumPersonal, b2sumPersonal_);
+
+	hits = 0;
+
+    for(int i = 0; i < b2sumLength; i++){
+
+		if(b2sumPersonal[i] >= '0' && b2sumPersonal[i] <= '9'){
+
+			strcpy(hexPersonal, hexCodes[b2sumPersonal[i] - '0']);	
+	
+		}
+		else if(b2sumPersonal[i] >= 'a' && b2sumPersonal[i] <= 'f'){
+
+			strcpy(hexPersonal, hexCodes[b2sumPersonal[i] - 'a' + 10]);
+
+		}
+		
+		if(b2sumPersonal_[i] >= '0' && b2sumPersonal_[i] <= '9'){
+
+			strcpy(hexPersonal_, hexCodes[b2sumPersonal_[i] - '0']);	
+	
+		}
+		else if(b2sumPersonal_[i] >= 'a' && b2sumPersonal_[i] <= 'f'){
+
+			strcpy(hexPersonal_, hexCodes[b2sumPersonal_[i] - 'a' + 10]);
+
+		}
+		
+		hexPersonal[4] = '\0';
+		hexPersonal_[4] = '\0';
+
+		for(int j = 0; j < 4; j++){
+			
+			if(hexPersonal[j] != hexPersonal_[j]) hits++;
+
+		}
+
+    }
+	
+	percentage = (float)(hits) / (b2sumLength * 4) * 100;
+
+	fprintf(diff, "Liczba rozniacych sie bitow: %d z %d, procentowo %.0f%%\n", hits, b2sumLength * 4, percentage);
+	
+	fclose(hash);
+    fclose(diff);
 
     return 0;
 
