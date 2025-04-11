@@ -14,13 +14,28 @@
           			}
         		};
    		 </script>
-   		 <script id="MathJax-script" async
-   		 src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+   		 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
 		</script>
 	</head>
 	<body>
-		<div id="matrixInput" class="matrix_input">
-		</div>
-                <script src="script.js"></script>
+        <div id="menu" class="matrix_menu">
+            <input type="radio" name="matrixSize" value="2x2" checked="checked"> 2x2
+            <p>$\begin{bmatrix} a_{11} & a_{12} \\ a_{21} & a_{22}\end{bmatrix}$</p>
+            <input type="radio" name="matrixSize" value="3x3"> 3x3
+            <p>$\begin{bmatrix} a_{11} & a_{12} & a_{13} \\ a_{21} & a_{22} & a_{23} \\ a_{31} & a_{32} & a_{33}\end{bmatrix}$</p>
+            <input type="radio" name="matrixSize" value="4x4"> 4x4
+            <p>$\begin{bmatrix} a_{11} & a_{12} & a_{13} & a_{14} \\ a_{21} & a_{22} & a_{23} & a_{24} \\ a_{31} & a_{32} & a_{33} & a_{34} \\ a_{41} & a_{42} & a_{43} & a_{44}\end{bmatrix}$</p>
+            <button onclick="buttonAction()">OK</button>
+        </div>
+        <div id="matrixInput" class="matrix_input">
+            <div id="matrixInputGrid" class="matrix_input_grid">
+		    </div>
+            <button onclick="getInput()">OK</button>
+            <button onclick="buttonReturn()">Return</button>
+        </div>
+        <div id="matrixCalculation" class="matrix_calculation">
+
+        </div>
+        <script src="script.js"></script>
 	</body>
 </html>
