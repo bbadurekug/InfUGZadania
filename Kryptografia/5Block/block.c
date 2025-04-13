@@ -30,10 +30,10 @@ typedef struct infoHeader {
 
 typedef struct colorTable {
 
-    char red;
-    char green;
-    char blue;
-    char reserved;
+    unsigned char blue;
+    unsigned char green;
+    unsigned char red;
+    unsigned char reserved;
 
 } ColorTable;
 
@@ -66,29 +66,23 @@ int main(){
     fread(&fileInfoHeader.colorsUsed, sizeof(char), 4, plain);
     fread(&fileInfoHeader.colorsImportant, sizeof(char), 4, plain);
 
-    printf("Size: %d\nWidth: %d\nHeight: %d\nPlanes: %d\nBitCount: %d\nCompression: %d\nImageSize: %d\nXpixelsPerM: %d\nCyPixelsPerM: %d\nColorsUsed: %d\nColorsImportant: %d\n", fileInfoHeader.size, fileInfoHeader.width, fileInfoHeader.height, fileInfoHeader.planes, fileInfoHeader.bitCount, fileInfoHeader.compression, fileInfoHeader.imageSize, fileInfoHeader.xPixelsPerM, fileInfoHeader.yPixelsPerM, fileInfoHeader.colorsUsed, fileInfoHeader.colorsImportant);
+    printf("Size: %d\nWidth: %d\nHeight: %d\nPlanes: %d\nBitCount: %d\nCompression: %d\nImageSize: %d\nXpixelsPerM: %d\nXpixelsPerM: %d\nColorsUsed: %d\nColorsImportant: %d\n", fileInfoHeader.size, fileInfoHeader.width, fileInfoHeader.height, fileInfoHeader.planes, fileInfoHeader.bitCount, fileInfoHeader.compression, fileInfoHeader.imageSize, fileInfoHeader.xPixelsPerM, fileInfoHeader.yPixelsPerM, fileInfoHeader.colorsUsed, fileInfoHeader.colorsImportant);
 
-    ColorTable fileColorTable[fileInfoHeader.width * fileInfoHeader.height];
+    ColorTable fileColorTable[2];
 
-    for(int i = 0; i < fileInfoHeader.width * fileInfoHeader.height; i++){
+    fread(&fileColorTable[0].blue, sizeof(unsigned char), 1, plain);
+    fread(&fileColorTable[0].green, sizeof(unsigned char), 1, plain);
+    fread(&fileColorTable[0].red, sizeof(unsigned char), 1, plain);
+    fread(&fileColorTable[0].reserved, sizeof(unsigned char), 1, plain);
 
-        fread(&fileColorTable[i].red, sizeof(char), 1, plain);
-        fread(&fileColorTable[i].green, sizeof(char), 1, plain);
-        fread(&fileColorTable[i].blue, sizeof(char), 1, plain);
-        fread(&fileColorTable[i].reserved, sizeof(char), 1, plain);
+    fread(&fileColorTable[1].blue, sizeof(unsigned char), 1, plain);
+    fread(&fileColorTable[1].green, sizeof(unsigned char), 1, plain);
+    fread(&fileColorTable[1].red, sizeof(unsigned char), 1, plain);
+    fread(&fileColorTable[1].reserved, sizeof(unsigned char), 1, plain);
 
-    }
+    printf("Color1: %u %u %u %u\nColor2: %u %u %u %u\n", fileColorTable[0].blue, fileColorTable[0].green, fileColorTable[0].red, fileColorTable[0].reserved, fileColorTable[1].blue, fileColorTable[1].green, fileColorTable[1].red, fileColorTable[1].reserved);
 
-    //AM I READING THE PIXEL DATA WRONG? ASK CHAT
-
-    for(int i = 0; i < 400; i++){
-
-        fileColorTable[i].red = 0;
-        fileColorTable[i].green = 0;
-        fileColorTable[i].blue = 0;
-        fileColorTable[i].reserved = 0;
-
-    }
+    fseek(plain, fileHeader.dataOffset, SEEK_SET);
 
     FILE* copy = NULL;
     copy = fopen("copy.bmp", "wb");
@@ -110,12 +104,23 @@ int main(){
     fwrite(&fileInfoHeader.colorsUsed, sizeof(char), 4, copy);
     fwrite(&fileInfoHeader.colorsImportant, sizeof(char), 4, copy);
 
-    for(int i = 0; i < fileInfoHeader.width * fileInfoHeader.height; i++){
+    fwrite(&fileColorTable[0].blue, sizeof(unsigned char), 1, copy);
+    fwrite(&fileColorTable[0].green, sizeof(unsigned char), 1, copy);
+    fwrite(&fileColorTable[0].red, sizeof(unsigned char), 1, copy);
+    fwrite(&fileColorTable[0].reserved, sizeof(unsigned char), 1, copy);
 
-        fwrite(&fileColorTable[i].red, sizeof(char), 1, copy);
-        fwrite(&fileColorTable[i].green, sizeof(char), 1, copy);
-        fwrite(&fileColorTable[i].blue, sizeof(char), 1, copy);
-        fwrite(&fileColorTable[i].reserved, sizeof(char), 1, copy);
+    fwrite(&fileColorTable[1].blue, sizeof(unsigned char), 1, copy);
+    fwrite(&fileColorTable[1].green, sizeof(unsigned char), 1, copy);
+    fwrite(&fileColorTable[1].red, sizeof(unsigned char), 1, copy);
+    fwrite(&fileColorTable[1].reserved, sizeof(unsigned char), 1, copy);
+
+    unsigned char input;
+
+    for(int i = 0; i < (fileInfoHeader.width * fileInfoHeader.height); i++){
+
+        fread(&input, sizeof(unsigned char), 1, plain);
+        printf("%u ", input);
+        fwrite(&input, sizeof(unsigned char), 1, copy);
 
     }
 
