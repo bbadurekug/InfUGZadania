@@ -50,10 +50,10 @@ int main(){
         return 1;
 
     }
-
+	
     for(int i = 0; i < 8; i++){
 
-        if(fscanf(keyFile, "%s", &key[i]) == 0){
+        if(fscanf(keyFile, "%s", key[i]) == 0){
 
             fprintf(stderr, "KEY SHOULD BE 8x8 CHARACTERS");
             return 1;
