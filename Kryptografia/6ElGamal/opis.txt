@@ -1,0 +1,1 @@
+Proszę użyć komendy 'gcc -w elgamal.c tommath/*.c -I tommath -o elgamal' podczas kompilacji

@@ -3,24 +3,92 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<time.h>
+#include"tommath/tommath.h"
 
-char* subtract(char* num1, char* num2){
+/*char* add(char* num1, char* num2){
 
     char* number = NULL;
+    char* longerNum = NULL;
+    char* shorterNum = NULL;
+    int num1Len = strlen(num1);
+    int num2Len = strlen(num2);
 
-    int numberLen = (strlen(num1) > strlen(num2)) ? strlen(num1) : strlen(num2);
+    int carry = 0;
+    int numberLen = 0;
+    int shorterLen = 0;
 
-    number = malloc(numberLen * sizeof(char));
+    if(num1Len > num2Len){
 
-    for(int i = 0; i < numberLen; i++){
+        numberLen = num1Len;
+        shorterLen = num2Len;
+        longerNum = malloc((numberLen + 1) * sizeof(char));
+        shorterNum = malloc((shorterLen + 1) * sizeof(char));
+        strcpy(longerNum, num1);
+        strcpy(shorterNum, num2);
 
+    }
+    else{
 
+        numberLen = num2Len;
+        shorterLen = num1Len;
+        longerNum = malloc((numberLen + 1) * sizeof(char));
+        shorterNum = malloc((shorterLen + 1) * sizeof(char));
+        strcpy(longerNum, num2);
+        strcpy(shorterNum, num1);
 
     }
 
+    number = malloc((numberLen + 1) * sizeof(char));
+
+    number[numberLen] = '\0';
+
+    for(int i = 1; i <= shorterLen; i++){
+
+        number[numberLen - i] = (longerNum[numberLen - i] - '0') + (shorterNum[shorterLen - i] - '0') + carry;
+
+        if(number[numberLen - i] > 9){
+
+            carry = number[numberLen - i] / 10;
+            number[numberLen - i] %= 10;
+
+        }
+        else{
+
+            carry = 0;
+
+        }
+
+        number[numberLen - i] += '0';
+
+    }
+
+    for(int i = shorterLen + 1; i <= numberLen; i++){
+
+        number[numberLen - i] = (longerNum[numberLen - i] - '0') + carry;
+
+        if(number[numberLen - i] > 9){
+
+            carry = number[numberLen - i] / 10;
+            number[numberLen - i] %= 10;
+
+        }
+        else{
+
+            carry = 0;
+
+        }
+
+        number[numberLen - i] += '0';
+
+    }
+
+    free(longerNum);
+    free(shorterNum);
+
     return number;
 
-}
+}*/
 
 char* getLongNumber(FILE* sourceFile){
 
@@ -34,7 +102,7 @@ char* getLongNumber(FILE* sourceFile){
 
         number = realloc(number, (++numberLen + 1) * sizeof(char));
 
-        number[numberLen - 1] = input - '0';
+        number[numberLen - 1] = input;
         number[numberLen] = '\0';
 
         input = getc(sourceFile);
@@ -52,18 +120,48 @@ void keys(){
     FILE* elgamal = NULL;
     elgamal = fopen("./elgamal.txt", "r");
 
-    char* number1;
-    char* number2;
+    char* num1 = NULL;
+    char* num2 = NULL;
 
-    number1 = getLongNumber(elgamal);
-    number2 = getLongNumber(elgamal);
+    num1 = getLongNumber(elgamal);
+    num2 = getLongNumber(elgamal);
 
-    printf("%s %ld\n%s %ld\n", number1, strlen(number1) - 1, number2, strlen(number2) - 1);
+    mp_int p, g, random, result;
 
+    mp_init(&p);
+    mp_init(&g);
+    mp_init(&random);
+    mp_init(&result);
 
+    mp_read_radix(&p, num1, 10);
+    mp_read_radix(&g, num2, 10);
 
-    free(number1);
-    free(number2);
+    free(num1);
+    free(num2);
+
+    srand(time(NULL));
+    mp_rand(&random, 128);
+
+    mp_int mod;
+    mp_init(&mod);
+
+    mp_read_radix(&mod, "10", 10);
+    mp_expt_n(&mod, 90, &mod);
+
+    mp_mod(&random, &mod, &random);
+
+    char private_key[256];
+    mp_to_radix(&random, private_key, 256, NULL, 10);
+
+    mp_exptmod(&g, &random, &p, &result);
+
+    char public_key[256];
+    mp_to_radix(&result, public_key, 256, NULL, 10);
+
+    printf("Private:\n%s\nPublic:\n%s\n", private_key, public_key);
+
+    mp_clear_multi(&p, &g, &random, &result, NULL);
+
     fclose(elgamal);
 
 }
