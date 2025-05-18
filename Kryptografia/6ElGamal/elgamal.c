@@ -221,7 +221,7 @@ void encrypt(){
 
     int compare_result = 0;
 
-    compare_result = mp_cmp(&m, &key_public);
+    compare_result = mp_cmp(&m, &p);
 
     if(compare_result != MP_LT){
 
@@ -363,6 +363,229 @@ void decrypt(){
 
 }
 
+void sign(){
+
+    FILE* private_file = NULL;
+    private_file = fopen("./private.txt", "r");
+
+    char* p_text = NULL;
+    char* g_text = NULL;
+    char* private_key = NULL;
+
+    p_text = getLongNumber(private_file);
+    g_text = getLongNumber(private_file);
+    private_key = getLongNumber(private_file);
+
+    fclose(private_file);
+
+    //printf("%s\n", private_key);
+
+    mp_int key_private, p, g, m, k;
+    mp_init(&key_private);
+    mp_init(&p);
+    mp_init(&g);
+    mp_init(&m);
+    mp_init(&k);
+
+    mp_read_radix(&p, p_text, 10);
+    mp_read_radix(&g, g_text, 10);
+    mp_read_radix(&key_private, private_key, 10);
+
+    free(private_key);
+    free(p_text);
+    free(g_text);
+
+    FILE* message = NULL;
+    message = fopen("./message.txt", "r");
+
+    char* m_text = NULL;
+    m_text = getLongNumber(message);
+    fclose(message);
+
+    mp_read_radix(&m, m_text, 10);
+    free(m_text);
+
+    int compare_result = 0;
+
+    compare_result = mp_cmp(&m, &p);
+
+    if(compare_result != MP_LT){
+
+        printf("Blad! m nie jest mniejsze od p!");
+        return;
+
+    }
+
+    mp_int tmp, euklides_result, p_minus_1;
+    mp_init(&tmp);
+    mp_init(&euklides_result);
+    mp_init(&p_minus_1);
+
+    mp_sub_d(&p, 1, &p_minus_1);
+
+    srand(time(NULL));
+
+    do{
+
+        mp_rand(&k, mp_count_bits(&p_minus_1));
+        mp_mod(&k, &p_minus_1, &tmp);
+        mp_exch(&tmp, &k);
+
+        //MOZE TO POPRAWIC
+        mp_gcd(&k, &p_minus_1, &euklides_result);
+
+    }while(mp_cmp_d(&euklides_result, 1) != MP_EQ || mp_cmp_d(&k, 1) != MP_GT);
+
+    mp_clear(&euklides_result);
+
+    mp_int r, x;
+    mp_init(&r);
+    mp_init(&x);
+
+    //MOZE POPRAWIC?
+    mp_exptmod(&g, &k, &p, &r);
+
+    mp_mulmod(&key_private, &r, &p_minus_1, &tmp);
+    mp_exch(&tmp, &key_private);
+
+    mp_sub(&m, &key_private, &tmp);
+    mp_exch(&tmp, &key_private);
+    mp_mod(&key_private, &p_minus_1, &tmp);
+    mp_exch(&tmp, &key_private);
+
+    //MOZE POPRAWIC?
+    mp_invmod(&k, &p_minus_1, &tmp);
+    mp_exch(&tmp, &k);
+
+    mp_mulmod(&key_private, &k, &p_minus_1, &x);
+
+    char r_text[256];
+    mp_to_radix(&r, r_text, 256, NULL, 10);
+    char x_text[256];
+    mp_to_radix(&x, x_text, 256, NULL, 10);
+
+    //printf("%s\n%s\n", r_text, x_text);
+
+    FILE* signature = NULL;
+    signature = fopen("./signature.txt", "w");
+
+    fprintf(signature, "%s\n%s\n", r_text, x_text);
+
+    fclose(signature);
+
+    mp_clear_multi(&p, &p_minus_1, &g, &m, &key_private, &k, &tmp, &r, &x, NULL);
+
+}
+
+void verify(){
+
+    FILE* public_file = NULL;
+    public_file = fopen("./public.txt", "r");
+
+    char* p_text = NULL;
+    char* g_text = NULL;
+    char* public_key = NULL;
+
+    p_text = getLongNumber(public_file);
+    g_text = getLongNumber(public_file);
+    public_key = getLongNumber(public_file);
+
+    fclose(public_file);
+
+    //printf("%s\n", public_key);
+
+    mp_int key_public, p, g, m;
+    mp_init(&key_public);
+    mp_init(&p);
+    mp_init(&g);
+    mp_init(&m);
+
+    mp_read_radix(&p, p_text, 10);
+    mp_read_radix(&g, g_text, 10);
+    mp_read_radix(&key_public, public_key, 10);
+
+    free(public_key);
+    free(p_text);
+    free(g_text);
+
+    FILE* message = NULL;
+    message = fopen("./message.txt", "r");
+
+    char* m_text = NULL;
+    m_text = getLongNumber(message);
+    fclose(message);
+
+    mp_read_radix(&m, m_text, 10);
+    free(m_text);
+
+    FILE* signature = NULL;
+    signature = fopen("./signature.txt", "r");
+
+    char* r_text = NULL;
+    char* x_text = NULL;
+
+    r_text = getLongNumber(signature);
+    x_text = getLongNumber(signature);
+    fclose(signature);
+
+    mp_int r, x;
+    mp_init(&r);
+    mp_init(&x);
+
+    mp_read_radix(&r, r_text, 10);
+    mp_read_radix(&x, x_text, 10);
+    free(r_text);
+    free(x_text);
+
+    mp_int a, b, tmp1, tmp2;
+    mp_init(&a);
+    mp_init(&b);
+    mp_init(&tmp1);
+    mp_init(&tmp2);
+
+    //MOZE POPRAWOC
+    mp_exptmod(&g, &m, &p, &a);
+
+    mp_exptmod(&r, &x, &p, &b);
+    mp_exptmod(&key_public, &r, &p, &tmp1);
+
+    mp_mulmod(&b, &tmp1, &p, &tmp2);
+    mp_exch(&tmp2, &b);
+
+    char result = 0;
+    int cmp_result = 0;
+
+    cmp_result = mp_cmp(&a, &b);
+
+    if(cmp_result == MP_EQ){
+
+        result = 'Y';
+
+    }
+    else{
+
+        result = 'N';
+
+    }
+
+    char a_text[256];
+    mp_to_radix(&a, a_text, 256, NULL, 10);
+    char b_text[256];
+    mp_to_radix(&b, b_text, 256, NULL, 10);
+
+    //printf("%s\n%s\n%c\n", a_text, b_text, result);
+
+    FILE* verify = NULL;
+    verify = fopen("./verify.txt", "w");
+
+    fprintf(verify, "%c\n", result);
+
+    fclose(verify);
+
+    mp_clear_multi(&p, &g, &m, &key_public, &r, &x, &a, &b, &tmp1, &tmp2, NULL);
+
+}
+
 int main(int argc, char *argv[]){
 
     if(argc != 2){
@@ -400,12 +623,14 @@ int main(int argc, char *argv[]){
         case 's':
 
             printf("Generowanie podpisu\n");
+            sign();
 
             break;
 
         case 'v':
 
             printf("Weryfikacja\n");
+            verify();
 
             break;
 
