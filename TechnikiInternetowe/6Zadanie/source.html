@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="pl">
+	<head>
+		<meta charset="utf-8">
+		<title>Dowcipy</title>
+		<meta name="author" content="Błażej Badurek">
+		<!--<link rel="stylesheet" type="text/css" href="style.css">-->
+	</head>
+	<body>
+		<div>		
+			<?php
+				$f=fopen('dowcipy.txt','r');
+				while(!feof($f)){
+					$linia = fgets($f);
+					echo $linia;
+					echo '<br>';
+				}
+				fclose($f);
+			?>
+		</div>
+	</body>
+</html>
