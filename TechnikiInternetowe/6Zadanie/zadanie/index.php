@@ -49,29 +49,25 @@
 <!DOCTYPE html>
 <html lang="pl-PL">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>Strona z dowcipami</title>
-    <!-- MDB icon -->
-    <!-- <link rel="icon" href="img/mdb-favicon.ico" type="image/x-icon" /> -->
-    <!-- Font Awesome -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
+    >
 	
 	<link rel="stylesheet" href="css/style.css">
     <!-- Google Fonts Roboto -->
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap"
-    />
+    >
     <!-- MDB -->
-    <link rel="stylesheet" href="css/mdb.min.css" />
+    <link rel="stylesheet" href="css/mdb.min.css">
 	
 	<script
-		type="text/javascript"
 		src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"
 	></script>
 	
@@ -100,13 +96,13 @@
 		
 		<div class="d-flex align-items-center justify-content-center w-100">
 		
-			<input type="radio" class="btn-check" name="options" id="option1" autocomplete="off" checked>
+			<input type="radio" class="btn-check" name="options" id="option1" checked>
 			<label class="btn btn-secondary flex-fill mx-2 text-center" for="option1">Karty</label>
 			
-			<input type="radio" class="btn-check" name="options" id="option2" autocomplete="off">
+			<input type="radio" class="btn-check" name="options" id="option2">
 			<label class="btn btn-secondary flex-fill mx-2 text-center" for="option2">Akordeon</label>
 			
-			<input type="radio" class="btn-check" name="options" id="option3" autocomplete="off">
+			<input type="radio" class="btn-check" name="options" id="option3">
 			<label class="btn btn-secondary flex-fill mx-2 text-center" for="option3">Karuzela</label>
 		
 		</div>
@@ -148,7 +144,7 @@
 	</section>
     <!-- Section: Pricing -->
 	
-	<section id="akordeon">
+	<div id="akordeon">
 	
 		<?php foreach ($dowcipy as $index => $dowcip): ?>
 			<?php $collapseID = 'collapse' . $index; ?>
@@ -178,7 +174,7 @@
 			
 		<?php endforeach; ?>
 	
-	</section>
+	</div>
 	
 	<section id="karuzela">
 	
@@ -255,7 +251,7 @@
 		});
 	</script>
 	
-    <script type="text/javascript" src="js/radio.js"></script>
+    <script src="js/radio.js"></script>
    
   </body>
 </html>
