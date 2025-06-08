@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="pl">
+	<head>
+		<meta charset="utf-8">
+		<title>Polskie otwarcie</title>
+		<meta name="keywords" content="szachy otwarcie polskie">
+		<meta name="description" content="otwarcie szachowe">
+		<meta name="author" content="Błażej Badurek">
+	</head>
+	<body>
+		<header>
+			<h1>Polskie otwarcie</h1>
+		</header>
+		<article>
+			<header>
+				<figure>
+					<img src='board.png' width="360" height="360" alt="obraz przedstawiajacy polskie otwarcie">
+					<figcaption>Polskie otwarcie 1.b4 Źródło
+						<a href="https://www.chess.com/openings/Polish-Opening">chess.com</a>
+					</figcaption>
+				</figure>
+				<div id="spis">
+					<fieldset>
+						<legend>Spis treści</legend>
+						<nav>
+							<a href="#info">
+								Ogólne informacje<br>
+							</a>
+							<a href="#szanse">
+								Szanse na wygraną<br>
+							</a>
+							<a href="#warianty">
+								Historyczne gry<br>
+							</a>
+							<a href="#form">
+								Formularz<br>
+							</a>
+							<a href="#gry">
+								Historyczne gry<br>
+							</a>
+							<a href="#form">
+								Formularz<br>
+							</a>
+							<a href="#sources">
+								Źródła<br>
+							</a>
+						</nav>
+					</fieldset>
+				</div>
+			</header>
+			<section>
+				<h2 id="info">Ogólne informacje</h2>
+				<pre>Otwarcie Polskie (również Otwarcie Sokolskiego, Otwarcie Orangutana) – otwarcie szachowe zaczynające się od
+posunięcia 1.b4, celem tego ruchu jest walka o przewagę na skrzydle Hetmańskim zamiast przejmowania kontroli nad
+centrum i wyprowadzenie czarnopolowego gońca na b2. Ruch b4 może zawsze zostać zagrany w późniejszech fazie partii,
+dlatego to otwarcie jest obecnie bardzo rzadkie, jednak Savielly Tartakower i Magnus Carlsen próbowali tego debiutu w
+turniejach i wygrywali z powodzeniem. Otwarcie Polskie klasyfikowane jest w encyklopedii debiutów pod kodem (A00) jako
+otwór nieregularny.</pre>
+				<h2 id="szanse">Szanse na wygraną</h2>
+				<table>
+					<caption>Prawdopodobieństwo wyniku partii</caption>
+					<tr> <th>Biały</th> <th>Remis</th> <th>Czarny</th> </tr>
+					<tr> <td>38.8%</td> <td>19.0%</td> <td>42.2%</td> </tr>
+				</table>
+				<h2 id="gry">Historyczne gry</h2>
+				<table>
+					<caption></caption>
+					<tr> <th>Białe</th> <th>Czarne</th> <th>Rok</th> </tr>
+					<tr> <td>Tartakower</td> <td>Maróczy</td> <td>1924</td> </tr>
+					<tr> <td rowspan="2">Carlsen</td> <td>Nakamura</td> <td rowspan="2">2021</td> </tr>
+					<tr> <td>So</td> </tr>
+				</table>
+				<h2 id="warianty">Popularne warianty</h2>
+				<dl>
+					<dt>Główna linia</dt>
+						<dd>1.b4 e5 2.Gb2 Gxb4</dd>
+					<dt>Obrona Czeska</dt>
+						<dd>1.b4 e5 2.Gb2 d6</dd>
+					<dt>Obrona Niemiecka</dt>
+						<dd>1.b4 d5 2.Gb2 Hd6</dd>
+					<dt>Wariant skrzydłowy</dt>
+						<dd>1.b4 c6</dd>
+					<dt>Obrona Holenderska</dt>
+						<dd>1.b4 f5</dd>
+					<dt>Wariant Sokolskiego</dt>
+						<dd>1.b4 d5 2.Gb2 e6 3.e3 Sf6 4.b5</dd>
+					<dt>Wariant Andersa</dt>
+						<dd>1.b4 d5 2.Gb2 e6 3.e3 Sf6 4.a6</dd>
+					<dt>Obrona Bałtycka</dt>
+						<dd>1.b4 d5 2.Gb2 Gf5</dd>
+					<dt>Gambit Birminghamu</dt>
+						<dd>1.b4 c5</dd>
+				</dl>
+			</section>
+			<footer>
+				<h2 id="form">Formularz</h2>
+				<form enctype="text/plain" action="mailto:przykladowy@email.com?subject=Wynik_formularza" method="post">
+					Podaj nazwę użytkownika: <input type="text"><br>
+					Podaj hasło: <input type="password" name="haslo" value="" size="30" maxlength="30"><br>
+					Twój email: <input type="email" name="email"><br>
+					Twoje ELO: <input type="number" name="elo" value="0"><br>
+					Płeć:
+					<input type="radio" name="plec" value="kobieta" checked="checked">Kobieta
+					<input type="radio" name="plec" value="mezczyzna">Mężczyzna
+					<input type="radio" name="plec" value="brak">Wolę nie podawać<br>
+					Wybierz ulubiony wariant:
+					<select name="warianty" size="1">
+						<option>Główna linia
+						<option>Obrona Czeska
+						<option>Obrona Niemiecka
+						<option>Wariant skrzydłowy
+						<option>Obrona Holenderska
+						<option>Wariant Sokolskiego
+						<option>Wariant Andersa
+						<option>Obrona Bałtycka
+						<option>Gambit Birminghamu
+					</select><br>
+					<textarea name="uwagi" rows="5" cols="30">Podaj uwagi na temat wariantu</textarea><br>
+					Wczytaj zdjęcie partii: <input type="file"><br>
+					Data rozegranej partii: <input type="date" name="data"><br>
+					<input type="submit" value="Prześlij informacje">
+					<input type="reset" value="Wyczyść formularz">
+				</form>
+			</footer>
+		</article>
+		<footer>
+			<h2 id="sources">Źródła</h2><ol>
+				<li>
+					<a href="https://www.chess.com/openings/Polish-Opening">
+						Polish Opening - Chess.com
+					</a><ol>
+						<li>Grafika planszy</li>
+						<li>Szanse na wygraną</li>
+					</ol>
+				</li>
+				<li>
+					<a href="https://pl.wikipedia.org/wiki/Nieregularne_otwarcie">
+						Nieregularne otwarcie - Wikipedia
+					</a><ol>
+						<li>Ogólne informacje</li>
+						<li>Historyczne gry</li>
+						<li>Popularne warianty</li>
+					</ol>
+				</li>
+			</ol>
+		</footer>
+	</body>
+</html>
