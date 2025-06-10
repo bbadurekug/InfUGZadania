@@ -1,0 +1,7 @@
+Program używa biblioteki GMP, aby przetwarzać długie wiadomości z pliku mess.txt
+
+Proszę o użycie następującej komendy przy kompilacji:
+
+gcc stegano.c -lgmp -o stegano
+
+Lub użycie już skompilowanego pliku stegano
