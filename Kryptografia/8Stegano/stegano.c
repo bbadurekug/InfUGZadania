@@ -444,6 +444,8 @@ void immerseBetweenlines(){
 
     fprintf(watermark, "%s", line);
 
+    free(line);
+
     mpz_clear(message);
 
     fclose(watermark);
@@ -550,9 +552,236 @@ void extractBetweenlines(){
 
 void immerseAttribute(){
 
+     //check if too short
+
+    FILE *cover = NULL;
+    cover = fopen("./cover.html", "r");
+
+    char* coverLine = NULL;
+    int coverLineLen = 0;
+
+    coverLine = malloc((coverLineLen + 1) * sizeof(char));
+
+    char input = 0;
+    int coverLen = 0;
+
+    while((input = fgetc(cover)) != EOF){
+
+        coverLine = realloc(coverLine, (++coverLineLen + 1) * sizeof(char));
+        coverLine[coverLineLen - 1] = input;
+        coverLine[coverLineLen] = '\0';
+
+        if(input == '\n'){
+
+            if((strstr(coverLine, "<p ") != NULL && strstr(coverLine, "style=") == NULL) || strstr(coverLine, "<p>") != NULL ){
+
+                coverLen++;
+
+            }
+
+            coverLineLen = 0;
+            coverLine = realloc(coverLine, (coverLineLen + 1) * sizeof(char));
+
+        }
+
+    }
+
+    free(coverLine);
+
+    rewind(cover);
+    int coverLines = 0;
+
+    while((input = fgetc(cover)) != EOF){
+
+        if(input == '\n'){
+
+            coverLines++;
+
+        }
+
+    }
+
+    FILE *mess = NULL;
+    mess = fopen("./mess.txt", "r");
+
+    char* hexString;
+    getHexString(mess, &hexString);
+    fclose(mess);
+
+    int messageLen;
+    messageLen = strlen(hexString) * 4;
+
+    //printf("cover: %d message: %d\n", coverLen, messageLen);
+
+    if(coverLen < messageLen){
+
+        fprintf(stderr, "Plik cover.html jest zbyt krótki, aby zaszyfrować wiadomość!");
+        free(hexString);
+        fclose(mess);
+        fclose(cover);
+        return;
+
+    }
+
+    //immersing begins
+
+    rewind(cover);
+
+    mpz_t message;
+    mpz_init(message);
+    mpz_set_str(message, hexString, 16);
+
+    free(hexString);
+
+    //gmp_printf("%Zx\n", message);
+
+    size_t bits = mpz_sizeinbase(message, 2);
+    ssize_t i = bits - 1;
+
+    //bit by bit
+
+    FILE *watermark = NULL;
+    watermark = fopen("./watermark.html", "w");
+
+    char* line = NULL;
+    int lineLen = 1;
+    line = malloc((lineLen + 1) * sizeof(char));
+
+    input = getc(cover);
+
+    line[lineLen - 1] = input;
+    line[lineLen] = '\0';
+
+    while((input = fgetc(cover)) != EOF){
+
+        line = realloc(line, (++lineLen + 1) * sizeof(char));
+        line[lineLen - 1] = input;
+        line[lineLen] = '\0';
+
+        if(input == '\n' && i >= 0){
+
+            if((strstr(line, "<p ") != NULL && strstr(line, "style=") == NULL) || strstr(line, "<p>") != NULL){
+
+                char* newLine = NULL;
+                newLine = calloc((lineLen + 49), sizeof(char));
+
+                char* found = strstr(line, ">");
+
+                if(mpz_tstbit(message, i--) == 0){
+
+                    //printf("0");
+                    strncpy(newLine, line, found - line);
+                    strcat(newLine, " style=\"margin-botom: 0cm; line-height: 100%\">");
+                    strcat(newLine, found + 1);
+
+                }
+                else{
+
+                    //printf("1");
+                    strncpy(newLine, line, found - line);
+                    strcat(newLine, " style=\"margin-bottom: 0cm; lineheight: 100%\">");
+                    strcat(newLine, found + 1);
+
+                }
+
+                free(line);
+                line = malloc((lineLen + 48) * sizeof(char));
+                strcpy(line, newLine);
+                free(newLine);
+
+            }
+
+            fprintf(watermark, "%s", line);
+            lineLen = 0;
+            line = realloc(line, (lineLen + 1) * sizeof(char));
+
+        }
+
+    }
+
+    fprintf(watermark, "%s", line);
+    free(line);
+
+    mpz_clear(message);
+
+    fclose(watermark);
+    fclose(cover);
+
 }
 
 void extractAttribute(){
+
+    FILE *watermark = NULL;
+    watermark = fopen("./watermark.html", "r");
+
+    char* result = NULL;
+    int resultLen = 0;
+    result = malloc((resultLen + 1) * sizeof(char));
+
+    result[resultLen] = '\0';
+
+    char* line = NULL;
+    int lineLen = 0;
+    line = malloc((lineLen + 1) * sizeof(char));
+
+    line[lineLen] = '\0';
+
+    char input = 0;
+
+    while((input = fgetc(watermark)) != EOF){
+
+        line = realloc(line, (++lineLen + 1) * sizeof(char));
+        line[lineLen - 1] = input;
+        line[lineLen] = '\0';
+
+        if(input == '\n'){
+
+            if(strstr(line, " style=\"margin-botom: 0cm; line-height: 100%\">") != NULL){
+
+                //printf("0");
+
+                result = realloc(result, (++resultLen + 1) * sizeof(char));
+                result[resultLen - 1] = '0';
+                result[resultLen] = '\0';
+
+            }
+            else if(strstr(line, " style=\"margin-bottom: 0cm; lineheight: 100%\">") != NULL){
+
+                //printf("1");
+
+                result = realloc(result, (++resultLen + 1) * sizeof(char));
+                result[resultLen - 1] = '1';
+                result[resultLen] = '\0';
+
+            }
+
+            lineLen = 0;
+            line = realloc(line, (lineLen + 1) * sizeof(char));
+
+        }
+
+    }
+
+    if(line != NULL) free(line);
+    fclose(watermark);
+
+    mpz_t message;
+    mpz_init(message);
+    mpz_set_str(message, result, 2);
+
+    free(result);
+
+    char* hexResult;
+    hexResult = mpz_get_str(NULL, 16, message);
+    mpz_clear(message);
+
+    FILE *detect = NULL;
+    detect = fopen("./detect.txt", "w");
+
+    //printf("%s", hexResult);
+    fprintf(detect, "%s", hexResult);
+
+    fclose(detect);
 
 }
 
