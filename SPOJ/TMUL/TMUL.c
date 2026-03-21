@@ -1,6 +1,34 @@
 #include<stdio.h>
 #include<stdlib.h>
 
+void obrocStringa(char *string){
+
+    int i = 0;
+    int end = 0;
+    char temp;
+
+    while(string[end] != '\0'){
+
+        end++;
+
+    }
+
+    end--;
+
+    //printf("bomba: %d\n", end);
+
+    for(int i = 0; i < end/2 + 1; i++){
+
+        temp = string[i];
+        string[i] = string[end - i];
+        string[end-i] = temp;
+
+    }
+
+    //printf("%s\n", string);
+
+}
+
 char* dodawanieStringow(char *string1, int len1, char *string2, int len2){
 
     char* wynik = malloc(sizeof(char) * (len1 + 2));
@@ -10,36 +38,39 @@ char* dodawanieStringow(char *string1, int len1, char *string2, int len2){
 
     short surplus = 0;
 
-    for(int i = 0; i < len1 + 1; i++){
+    for(int i = 0; i < len1; i++){
 
-        wynik[i] = surplus;
+        wynik[i] = string1[len1 - 1 - i] - 48;
         surplus = 0;
 
-            if((wyniki[j][i] != 0){
-                //printf("do %d dodaje %d\n", wynik[i], wyniki[j][i] - 48,);
-                wynik[i] += wyniki[j][i] - 48;
+        if(string2[len2 - 1 - i] != 48 && len2 - 1 - i >= 0){
 
-                if(wynik[i] > 9){
-
-                    surplus += wynik[i] / 10;
-                    wynik[i] %= 10;
-
-                }
-
-            }
+            wynik[i] += string2[len2 - 1 - i] - 48;
 
         }
 
-        wynik[i] += 48;
-        //printf("surplus: %d wynik: %c\n", surplus, wynik[i]);
+        if(wynik[i] > 10){
 
+            surplus = wynik[i] / 10;
+            wynik[i] %= 10;
+
+        }
+
+        //printf("dodaje %d i %d\n", string1[len1 - 1 - i] - 48, string2[len2 - 1 - i] - 48);
+
+        wynik[i] += 48;
+        //printf("surplus: %d wynik: %c i: %d\n", surplus, wynik[i], i);
+
+    }
+
+    if(surplus > 0){
+        wynik[len1 + 1] = surplus + 48;
     }
 
     if(wynik[len1 + len2] == 48 && wynik[len1 + len2 - 1] == 48)
         wynik[len1 + len2 - 1] = '\0';
     else if(wynik[len1 + len2] == 48 && wynik[len1 + len2 - 1] != 48)
         wynik[len1 + len2] = '\0';
-
 
     /*for(int i = len1 + len2 - 2; i >= 0; i--)
         printf("%c", wynik[i]);
@@ -175,9 +206,16 @@ void karatsuba(char *string1, int len1, char *string2, int len2){
     char* aStep = mnozenieStringow(string1, len1 - srodek, string2, len2 - srodek);
     char* bStep = mnozenieStringow(string1 + len1 - srodek, srodek, string2 + len2 - srodek, srodek);
 
+    obrocStringa(aStep);
+    obrocStringa(bStep);
+
     printf("\n%s\n%s\n", aStep, bStep);
 
-    char* cStep = mnozenieStringow()
+    char* cStep = mnozenieStringow(dodawanieStringow(string1, len1 - srodek, string1 + len1 - srodek, srodek), 3 ,dodawanieStringow(string2, len2 - srodek, string2 + len2 - srodek, srodek), 3);
+
+    obrocStringa(cStep);
+
+    printf("%s\n", cStep);
 
     free(aStep);
     free(bStep);

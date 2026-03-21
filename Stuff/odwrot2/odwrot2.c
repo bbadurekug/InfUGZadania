@@ -2,14 +2,14 @@
 
 void odwrot(int n){
 
-    int liczba;
+    long long int liczba;
 
     if(n != 0){
-        scanf("%d", &liczba);
+        scanf("%lld", &liczba);
 
         odwrot(n-1);
 
-        printf("%d ", liczba);
+        printf("%lld ", liczba);
     }
     else
         printf("Twoje liczby od tylu:\n");

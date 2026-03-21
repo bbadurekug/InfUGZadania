@@ -22,14 +22,11 @@ int main(){
 
         scanf("%d", &temp);
 
-        //Przechowuje wpisane liczby w 'temp'
-
         if(temp)
             dlugosc = dlugosc * 10 + (log10(llabs(temp)) + 1);
         else
             dlugosc *= 10;
 
-        //Jezeli n=0, to dlugosc tez 0, inaczej wpisuje dlugosc liczby
         //Bez tego program crashowal, jezeli 0 bylo ostatnie
 
         if(temp < 0){
@@ -40,9 +37,6 @@ int main(){
             liczby = (liczby * (unsigned long long int)pow(10, dlugosc % 10)) + temp;
             znaki = znaki * 10 + 1;
         }
-
-        //Wpisuje liczbe z 'temp' do 'liczby'
-        //Jezeli n>0, wpisuje 1 do 'znaki', w przeciwnym wypadku wpisuje 2 do 'znaki'
 
     }
 
@@ -72,8 +66,6 @@ int main(){
 
         if((znaki % (unsigned long long int)pow(10, j+1)) / (unsigned long long int)pow(10, j) == 2)
             printf("-");
-
-        //Jezeli liczba ujemna, wypisuje '-' przed
 
         printf("%d ", (liczby % (unsigned long long int)pow(10, ileModulo)) / (unsigned long long int)pow(10, ilePodzielic));
 

@@ -113,25 +113,25 @@ void oblicz_podzbiory(char zbior[], char n){
 
         }
 
-        printf("{");
+        //printf("{");
 
         for(int m = 0; m < n; m++){
 
-            if(podzbiory[m])
-                printf("%d", podzbiory[m]);             //wypisywanie / jezeli 0, to nie wypisuje
+            //if(podzbiory[m])
+                //printf("%d", podzbiory[m]);             //wypisywanie / jezeli 0, to nie wypisuje
 
         }
 
-        printf("} ");
+        //printf("} ");
     }
 }
 
 int main(){
 
-    unsigned char n;
+    unsigned char n = 100;
 
-    printf("Podaj dlugosc zbioru:\n");
-    scanf("%hhu", &n);
+    //printf("Podaj dlugosc zbioru:\n");
+    //scanf("%hhu", &n);
 
     unsigned char zbior[n];
 
