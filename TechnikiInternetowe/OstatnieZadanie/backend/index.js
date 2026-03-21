@@ -99,7 +99,7 @@ app.put('/admin/users/:id', async (req, res) => {
 		const dataToUpdate = { name, role };
 
 		if (password) {
-			dataToUpdate.password_hash = await bcrypt.hash(password, 10);
+			dataToUpdate.password_hash = await bcrypy.hash(password, 10);
 		}
 
 		const updatedUser = await prisma.user.update({
@@ -280,7 +280,7 @@ app.post('/admin/players', async (req, res) => {
 				firstName,
 				lastName,
 				foot,
-				teamId: team?.id ?? null
+				teamId: team.id
 			}
 		});
 
@@ -316,7 +316,7 @@ app.put('/admin/players/:id', async (req, res) => {
 		data: { firstName, 
 			lastName, 
 			foot, 
-			teamId: team?.id ?? null 
+			teamId: team.id 
 		},
 		include: {
 			team: true

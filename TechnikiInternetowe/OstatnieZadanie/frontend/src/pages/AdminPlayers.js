@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Button, ListGroup, Row, Col, Form, Alert } from 'react-bootstrap';
+import { Container, Button, ListGroup, Row, Col, Form } from 'react-bootstrap';
 
 function AdminPlayers() {
 
@@ -16,21 +16,15 @@ function AdminPlayers() {
 	}, []);
 
 	if (!user || user.role !== 'ADMIN') {
-		setTimeout(() => {
-			window.location.href = '/';
-		}, 1500);
-		return <Alert className="d-flex align-items-center justify-content-center">Brak dostępu do sesji administratora. Przekierowuje...</Alert>;
+		return <p>Brak dostępu do sesji administratora.</p>;
 	}
-	
+
 	async function handleCreate(e) {
 		e.preventDefault();
 		const res = await fetch('/admin/players', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				...form,
-				teamName: form.teamName.trim() === '' ? null : form.teamName.trim()
-				}),
+			body: JSON.stringify(form),
 		});
 
 		const newPlayerRes = await fetch('/admin/players');
@@ -59,10 +53,8 @@ function AdminPlayers() {
 		const res = await fetch(`/admin/players/${editingPlayer.id}`, {
 			method: 'PUT',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				...form,
-				teamName: form.teamName.trim() === '' ? null : form.teamName.trim()
-				}),
+			body: JSON.stringify(form),
+
 		});
 
 		if (res.ok) {

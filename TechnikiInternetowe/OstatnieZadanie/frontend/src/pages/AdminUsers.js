@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Button, ListGroup, Row, Col, Form, Alert } from 'react-bootstrap';
+import { Container, Button, ListGroup, Row, Col, Form } from 'react-bootstrap';
 
 function AdminUsers() {
 	
@@ -16,10 +16,7 @@ function AdminUsers() {
 	}, []);
 
 	if (!user || user.role !== 'ADMIN') {
-		setTimeout(() => {
-			window.location.href = '/';
-		}, 1500);
-		return <Alert className="d-flex align-items-center justify-content-center">Brak dostępu do sesji administratora. Przekierowuje...</Alert>;
+		return <p>Brak dostępu do sesji administratora.</p>;
 	}
 
 	async function handleCreate(e) {

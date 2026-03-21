@@ -3,16 +3,7 @@ import { Link } from 'react-router-dom';
 import { Container, Button, ListGroup, Row, Col, Alert } from 'react-bootstrap';
 
 function Admin() {
- 
-	const user = JSON.parse(localStorage.getItem('user'));
-	
-	if (!user || user.role !== 'ADMIN') {
-		setTimeout(() => {
-			window.location.href = '/';
-		}, 1500);
-		return <Alert className="d-flex align-items-center justify-content-center">Brak dostępu do sesji administratora. Przekierowuje...</Alert>;
-	}
-
+  
 	return (
 		<div
 			style={{

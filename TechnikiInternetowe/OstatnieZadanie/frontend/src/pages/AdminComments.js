@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Button, ListGroup, Row, Col, Form, Alert } from 'react-bootstrap';
+import { Container, Button, ListGroup, Row, Col, Form } from 'react-bootstrap';
 
 function AdminComments() {
 
@@ -16,10 +16,7 @@ function AdminComments() {
 	}, []);
 
 	if (!user || user.role !== 'ADMIN') {
-		setTimeout(() => {
-			window.location.href = '/';
-		}, 1500);
-		return <Alert className="d-flex align-items-center justify-content-center">Brak dostępu do sesji administratora. Przekierowuje...</Alert>;
+		return <p>Brak dostępu do sesji administratora.</p>;
 	}
 
 	async function handleCreate(e) {
@@ -33,7 +30,7 @@ function AdminComments() {
 		const newCommentRes = await fetch('/admin/comments');
 		const newComment = await newCommentRes.json();
 		setComments(newComment);
-		setForm({ content: '', userName: ''});
+		setForm({ content: '', user: ''});
 	}
 
 	async function handleDelete(id) {
@@ -120,7 +117,7 @@ function AdminComments() {
 					{comments.map(u => (
 						<ListGroup.Item key={u.id} className="d-flex justify-content-between align-itams-center">
 							<div>	
-								({u.content}) by {u.user?.name || 'WTF'}
+								({u.content}) by {u.user.name} 
 							</div>
 							<div className="d-flex gap-2">
 								<Button variant="warning" onClick={() => startEditing(u)}>
