@@ -47,7 +47,7 @@ function updateMatrix(){
 
 function buttonAction(){
     
-    document.getElementById("matrixCalculation").innerHTML = '<button onclick="buttonAction()">Return</button><br><button id="calculationButton" onclick="calculate()">Calculate</button><br>';
+    document.getElementById("matrixCalculation").innerHTML = '<button id="calculationButton" onclick="calculate()">Calculate</button><br><button onclick="buttonAction()">Return</button><br>';
 
     document.getElementById("matrixCalculation").style.display = "none";
     document.getElementById("menu").style.display = "none";
@@ -74,7 +74,7 @@ function buttonAction(){
     
     document.getElementById("matrixInputGrid").innerHTML = inputMatrix;
     
-    document.getElementById("matrixInput").style.display = "flex";
+    document.getElementById("matrixInput").style.display = "block";
 
 }
 
@@ -88,21 +88,33 @@ function buttonReturn(){
 
 function getInput(){
 
-    document.getElementById("matrixInput").style.display = "none";
-
     for(let i = 0; i < matrixRows; i++){
     
     	for(let j = 0; j < matrixColumns; j++){
-    
+            
+            if(document.getElementById('' + i + j + '').value == ''){
+                
+                document.getElementById("noti").style.display = "flex";
+                return;
+
+            }
+
     		matrix[i][j] = document.getElementById('' + i + j + '').value;
     
     	}
     
     }
-        
+    
+    document.getElementById("matrixInput").style.display = "none";
     document.getElementById("matrixCalculation").style.display = "initial";
 
     updateMatrix();
+}
+
+function notiAction(){
+
+    document.getElementById("noti").style.display = "none";
+
 }
 
 function calculate2x2(matrix_input){
@@ -221,15 +233,21 @@ function calculate(){
             break;
 
         case 3:
-
+            
+            document.getElementById("matrixCalculation").innerHTML += '<h4>Reguła Sarrusa</h4>';
             calculate3x3(matrix, 'A', 1);
             break;
 
         case 4:
 
+            document.getElementById("matrixCalculation").innerHTML += '<h4>Rozwinięcia Laplace’a</h4>';
             calculate4x4(matrix);
             break;
 
     }
+    
+    const p = document.getElementById("matrixCalculation").getElementsByTagName("p");
+
+    p[p.length - 1].style.border = "1px solid black";
 
 }

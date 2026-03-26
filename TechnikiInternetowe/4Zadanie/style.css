@@ -3,25 +3,58 @@
 body {
 	display: flex;
     position: relative;
+    align-items: center;
 	justify-content: center;
+    height: 100vh;
+}
+
+.notification {
+    display: none;
+    position: absolute;
+    background-color: #b1b1b1;
+    border: 1px solid black;
+    left: 50%;
+    top: 50%;
+    width: 256px;
+    height: 128px;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+}
+
+.notification p {
+    text-align: center;
+}
+
+.notification button {
+    border: 1px solid black;
+    cursor: pointer;
+    width: 128px;
 }
 
 .matrix_menu {
     flex-wrap: wrap;
     text-align: center;
     justify-content: space-between;
-    position: flex;
 }
 
 .matrix_input {
     display: none;
-    align-items: center;
+    flex-wrap: wrap;
+    text-align: center;
     justify-content: center;
+}
+
+.matrix_input button {
+    margin: 10px;
 }
 
 .matrix_input_grid {
     display: grid;
-    gap: 0px;
+    place-items: center;
+    width: 100%;
 }
 
 .matrix_input_grid input {
@@ -35,9 +68,12 @@ body {
     flex-wrap: wrap;
     text-align: center;
     justify-content: space-between;
-    position: flex;
 }
 
 .matrix_calculation p {
     background-color: #f5f5f5;
+}
+
+.matrix_calculation button {
+    margin: 10px;
 }
