@@ -5,10 +5,10 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci --omit=dev
 
-COPY src/ ./src/
+COPY ./backend ./backend
 
 EXPOSE 3000
 
 USER node
 
-CMD ["node", "src/server.js"]
+CMD ["node", "./backend/server.js"]
