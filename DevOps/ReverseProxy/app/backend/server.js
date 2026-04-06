@@ -1,19 +1,34 @@
 const express = require('express');
 const app = express();
-const PORT = process.env.PROT || 3000;
+const PORT = process.env.PORT || 3000;
 
-const items = ['item1', 'item2', 'item3'];
+app.use(express.json()); 
 
-app.get('/items', (req, res) => {
-    //definicja
+var items = ['item1', 'item2', 'item3'];
+
+app.get('/api/items', (req, res) => {
+    res.json(items); 
 });
 
-app.post('/items', (req, res) => {
-    //definicja
+app.post('/api/items', (req, res) => {
+    const newItem = req.body.item;
+
+    if (typeof newItem !== 'string' || newItem.trim() === '') {
+        res.status(400).json({
+            message: "Produkt musi byc byc napisem!"
+        });
+    }
+
+    items.push(newItem);
+
+     res.status(201).json({
+        message: "Produkty zostal pomyslnie dodany!",
+        item: newItem
+    });
 });
 
-app.get('/stats', (req, res) => {
-    //definicja
+app.get('/api/stats', (req, res) => {
+    res.json(len(items)); 
 });
 
 app.listen(PORT, () => {
