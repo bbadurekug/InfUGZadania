@@ -1,6 +1,21 @@
+const form = document.getElementById('product-form');
+const productNameInput = document.getElementById('product-form-name');
+
+form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const productName = productNameInput.value.trim();
+
+    const response = await dodajProdukt(productName);
+
+    if (response.ok) {
+        productNameInput.value = '';
+    }
+});
+
 async function pobierzDane() {
     try {
-        const response = await fetch('/api/items/');
+        const response = await fetch('/api/items');
         
         if (!response.ok) {
             throw new Error(`Błąd serwera: ${response.status}`);
@@ -17,9 +32,11 @@ async function pobierzDane() {
 async function odswierzListe() {
     const lista = document.getElementById('product-list');
 
-    data = await pobierzDane();
+    const data = await pobierzDane();
 
     lista.innerHTML = '';
+
+    if (!data) return;
 
     data.forEach(product => {
         const li = document.createElement('li');
@@ -48,20 +65,5 @@ async function dodajProdukt(productName) {
         console.error("Wystąpił błąd podczas dodawania produktu:", error);
     }
 }
-
-const form = document.getElementById('product-form');
-const productNameInput = document.getElementById('product-form-name');
-
-form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-
-    const productName = productNameInput.value.trim();
-
-    const response = await dodajProdukt(productName);
-
-    if (response.ok) {
-        productNameInput.value = '';
-    }
-});
 
 odswierzListe();
