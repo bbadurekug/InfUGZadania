@@ -1,13 +1,14 @@
 const express = require('express');
+const os = require('os');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json()); 
+app.use(express.json());
 
 var items = ['item1', 'item2', 'item3'];
 
 app.get('/api/items', (req, res) => {
-    res.json(items); 
+    res.json(items);
 });
 
 app.post('/api/items', (req, res) => {
@@ -21,14 +22,17 @@ app.post('/api/items', (req, res) => {
 
     items.push(newItem);
 
-     res.status(201).json({
+    res.status(201).json({
         message: "Produkty zostal pomyslnie dodany!",
         item: newItem
     });
 });
 
 app.get('/api/stats', (req, res) => {
-    res.json(len(items)); 
+    res.json({
+        item_count: items.length,
+        backend_id: os.hostname()
+    });
 });
 
 app.listen(PORT, () => {

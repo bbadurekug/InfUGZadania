@@ -55,7 +55,7 @@ const productNameInput = document.getElementById('product-form-name');
 form.addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    const productName = productNameInput.value;
+    const productName = productNameInput.value.trim();
 
     const response = await dodajProdukt(productName);
 

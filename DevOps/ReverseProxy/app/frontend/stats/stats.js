@@ -20,8 +20,10 @@ async function odswierzDane() {
     const data = await pobierzDane();
 
     const numberOfProductsP = document.getElementById('number-of-products');
+    const backendIdP = document.getElementById('backend-id');
 
-    numberOfProductsP.innerHTML = data;
+    numberOfProductsP.innerHTML = data.item_count;
+    backendIdP.innerHTML = data.backend_id;
 }
 
 odswierzDane();

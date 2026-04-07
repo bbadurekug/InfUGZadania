@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reverse Proxy Demo</title>
+    <link rel="stylesheet" href="/style/global.css">
     <link rel="stylesheet" href="./products.css">
 </head>
 <body>
@@ -16,8 +17,9 @@
 
     <form id="product-form" class="product-form">
         <h2>Dodaj produkt</h2>
-        <label for="name">Nazwa:</label>
-        <input id="product-form-name" type="text">
+        <label for="name">Nazwa:
+            <input id="product-form-name" type="text" required>
+        </label>
         <button type="submit">Dodaj</button>
     </form>
 
