@@ -1,0 +1,33 @@
+:root {
+    --primary-color: #227C9D;
+    --secondary-color: #17C3B2;
+    --accent-color: #FFCB77;
+    --warning-color: #FE6D73;
+    --text-color: #FEF9EF;
+}
+
+body {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    margin: 50px;
+}
+
+button {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    font-weight: bold;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
+a {
+    color: var(--accent-color);
+}
+
+a:visited {
+    color: var(--secondary-color);
+}
