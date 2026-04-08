@@ -5,6 +5,8 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
+const instanceId = process.env.INSTANCE_ID || os.hostname();
+
 var items = ['item1', 'item2', 'item3'];
 
 app.get('/api/items', (req, res) => {
@@ -31,7 +33,7 @@ app.post('/api/items', (req, res) => {
 app.get('/api/stats', (req, res) => {
     res.json({
         item_count: items.length,
-        backend_id: os.hostname()
+        backend_id: instanceId
     });
 });
 
