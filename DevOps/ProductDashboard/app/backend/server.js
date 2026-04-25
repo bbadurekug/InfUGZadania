@@ -1,13 +1,22 @@
 const express = require('express');
 const os = require('os');
+const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+const ITEMS_DATA_PATH = '/data/items.json';
 
 app.use(express.json());
 
 const instanceId = process.env.INSTANCE_ID || os.hostname();
 
-var items = ['item1', 'item2', 'item3'];
+let items = [];
+
+if (fs.existsSync(ITEMS_DATA_PATH)) {
+    items = JSON.parse(fs.readFileSync(ITEMS_DATA_PATH, 'utf8'));
+} else {
+    fs.writeFileSync(ITEMS_DATA_PATH, JSON.stringify(items));
+}
 
 app.get('/api/items', (req, res) => {
     res.json(items);
@@ -23,6 +32,7 @@ app.post('/api/items', (req, res) => {
     }
 
     items.push(newItem);
+    fs.writeFileSync(ITEMS_DATA_PATH, JSON.stringify(items));
 
     res.status(201).json({
         message: "Produkty zostal pomyslnie dodany!",
@@ -34,6 +44,12 @@ app.get('/api/stats', (req, res) => {
     res.json({
         item_count: items.length,
         backend_id: instanceId
+    });
+});
+
+app.get('/api/health', (req, res) => {
+    res.json({
+        status: "ok"
     });
 });
 
