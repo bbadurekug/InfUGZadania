@@ -17,8 +17,11 @@
 
     <form id="product-form" class="product-form">
         <h2>Dodaj produkt</h2>
-        <label for="name">Nazwa:
+        <label for="product-form-name">Nazwa:
             <input id="product-form-name" type="text" required>
+        </label>
+        <label for="product-form-price">Cena (w zł):
+            <input id="product-form-price" type="number" min="0" step="0.01" required>
         </label>
         <button type="submit">Dodaj</button>
     </form>

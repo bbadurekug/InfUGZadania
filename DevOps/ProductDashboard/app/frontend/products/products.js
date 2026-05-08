@@ -1,15 +1,21 @@
 const form = document.getElementById('product-form');
 const productNameInput = document.getElementById('product-form-name');
+const productPriceInput = document.getElementById('product-form-price');
 
 form.addEventListener('submit', async (event) => {
     event.preventDefault();
 
     const productName = productNameInput.value.trim();
+    const productPrice = parseFloat(productPriceInput.value);
 
-    const response = await dodajProdukt(productName);
+    const newProduct = { name: productName, price: productPrice };
 
-    if (response.ok) {
+    const success = await dodajProdukt(newProduct);
+
+    if (success) {
         productNameInput.value = '';
+        productPriceInput.value = '';
+        await odswierzListe();
     }
 });
 
@@ -41,28 +47,30 @@ async function odswierzListe() {
     data.forEach(product => {
         const li = document.createElement('li');
             
-        li.textContent = product;
+        li.textContent = `${product.name} (${product.price} zł)`;
 
         lista.appendChild(li);
     });
 }
 
-async function dodajProdukt(productName) {
+async function dodajProdukt(newProduct) {
     try {
         const response = await fetch('/api/items', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ item: productName })
+            body: JSON.stringify({ name: newProduct.name, price: newProduct.price })
         });
 
         if (!response.ok) {
-            throw new Error(`Błąd serwera: ${response.status}`);
-        } else {
-            await odswierzListe();
-            return response;
+            const errorData = await response.json();
+            console.error(`Błąd: ${errorData.message || response.status}`);
+            return false;
         }
+
+        return true;
     } catch (error) {
         console.error("Wystąpił błąd podczas dodawania produktu:", error);
+        return false;
     }
 }
 

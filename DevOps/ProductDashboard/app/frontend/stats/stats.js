@@ -8,8 +8,6 @@ async function pobierzDane() {
 
         const data = await response.json();
 
-        console.log(data);
-
         return data;
     } catch (error) {
         console.error("Wystąpił błąd podczas pobierania:", error);
@@ -19,11 +17,11 @@ async function pobierzDane() {
 async function odswierzDane() {
     const data = await pobierzDane();
 
-    const numberOfProductsP = document.getElementById('number-of-products');
-    const backendIdP = document.getElementById('backend-id');
+    const productCountP = document.getElementById('product-count');
+    const cacheHitsP = document.getElementById('cache-hits');
 
-    numberOfProductsP.innerHTML = data.item_count;
-    backendIdP.innerHTML = data.backend_id;
+    productCountP.innerHTML = data.product_count;
+    cacheHitsP.innerHTML = data.cache_hits;
 }
 
 odswierzDane();

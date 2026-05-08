@@ -1,56 +1,73 @@
 const express = require('express');
-const os = require('os');
-const fs = require('fs');
+const { Pool } = require('pg');
+const Redis = require('ioredis');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const ITEMS_DATA_PATH = '/data/items.json';
-
 app.use(express.json());
 
-const instanceId = process.env.INSTANCE_ID || os.hostname();
+const pg = new Pool({ connectionString: process.env.DB_URL });
+const redis = new Redis(process.env.REDIS_URL);
 
-let items = [];
+let cacheHits = 0;
 
-if (fs.existsSync(ITEMS_DATA_PATH)) {
-    items = JSON.parse(fs.readFileSync(ITEMS_DATA_PATH, 'utf8'));
-} else {
-    fs.writeFileSync(ITEMS_DATA_PATH, JSON.stringify(items));
-}
+app.get('/api/items', async (req, res) => {
+    try {
+        const cachedData = await redis.get('products');
 
-app.get('/api/items', (req, res) => {
-    res.json(items);
+        if (cachedData) {
+            cacheHits++;
+            return res.json(JSON.parse(cachedData));
+        }
+
+        const query = await pg.query('SELECT * FROM products');
+        const products = query.rows;
+
+        await redis.set('products', JSON.stringify(products), 'EX', 30); //cache na 30 sekund
+
+        res.json(products);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Błąd podczas wczytywania danych" });
+    }
 });
 
-app.post('/api/items', (req, res) => {
-    const newItem = req.body.item;
+app.post('/api/items', async (req, res) => {
+    const { name, price } = req.body;
 
-    if (typeof newItem !== 'string' || newItem.trim() === '') {
-        res.status(400).json({
-            message: "Produkt musi byc byc napisem!"
-        });
+    if (!name || !price) {
+        return res.status(400).json({ error: "Nie podano nazwy i/lub ceny!" });
     }
 
-    items.push(newItem);
-    fs.writeFileSync(ITEMS_DATA_PATH, JSON.stringify(items));
+    try {
+        await pg.query('INSERT INTO products (name, price) VALUES ($1, $2)', [name, price]);
 
-    res.status(201).json({
-        message: "Produkty zostal pomyslnie dodany!",
-        item: newItem
-    });
+        await redis.del('products');
+
+        res.status(201).json({ message: "Produkt dodany pomyślnie"})
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Błąd podczas zapisywania danych" });
+    }
 });
 
-app.get('/api/stats', (req, res) => {
-    res.json({
-        item_count: items.length,
-        backend_id: instanceId
-    });
+app.get('/api/stats', async (req, res) => {
+    try {
+        const query = await pg.query('SELECT COUNT(*) FROM products');
+        const count = parseInt(query.rows[0].count);
+
+        res.json({
+            product_count: count,
+            cache_hits: cacheHits
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Błąd podczas pobierania statystyk" });
+    }
 });
 
 app.get('/api/health', (req, res) => {
-    res.json({
-        status: "ok"
-    });
+    res.json({ status: "ok" });
 });
 
 app.listen(PORT, () => {

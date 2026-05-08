@@ -9,8 +9,6 @@ RUN npm ci --omit=dev && npm cache clean --force
 
 COPY ./app/backend ./backend
 
-COPY --chown=node:node ./app/data /data
-
 LABEL version=$IMAGE_VERSION
 
 EXPOSE 3000
