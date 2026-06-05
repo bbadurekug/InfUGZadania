@@ -37,10 +37,11 @@ class BruteForce(ISearchAlgorithm):
         search_key_index = 0
 
         file_index = 0
-        chars_to_check = APP_CONFIG.range[1] - APP_CONFIG.range[0]
 
         start_index = APP_CONFIG.range[0]
         end_index = APP_CONFIG.range[1]
+
+        chars_to_check = end_index - start_index
 
         with open(APP_CONFIG.file_path, "r", encoding="utf-8") as f:
             text_fragment = f.read()[start_index : end_index + 1]
@@ -69,9 +70,9 @@ class BruteForce(ISearchAlgorithm):
 
 class BoyerMoore(ISearchAlgorithm):
     def setup(self):
-        bad_match_table = {}
         search_key = APP_CONFIG.search_key
         search_key_len = len(search_key)
+        bad_match_table = {}
 
         for i in range(search_key_len - 1):
             bad_match_table[search_key[i]] = search_key_len - i - 1
@@ -89,10 +90,11 @@ class BoyerMoore(ISearchAlgorithm):
         search_key_index = 0
 
         file_index = 0
-        chars_to_check = APP_CONFIG.range[1] - APP_CONFIG.range[0]
 
         start_index = APP_CONFIG.range[0]
         end_index = APP_CONFIG.range[1]
+
+        chars_to_check = end_index - start_index
 
         with open(APP_CONFIG.file_path, "r", encoding="utf-8") as f:
             text_fragment = f.read()[start_index : end_index + 1]
@@ -104,7 +106,7 @@ class BoyerMoore(ISearchAlgorithm):
             search_key_index = search_key_len - 1
 
             while search_key_index >= 0 and text_fragment[file_index + search_key_index] == search_key[search_key_index]:
-                #print(f"Process {RANK} checking {text_fragment[file_index + search_key_index]} against {search_key[search_key_index]}")
+                #print(f"Process {RANK} checking {text_fragment[file_index + search_key_index]} against {search_key[search_key_index]} - hits so far {search_key_len - search_key_index}")
                 search_key_index -= 1
 
             if search_key_index < 0:
@@ -119,11 +121,71 @@ class BoyerMoore(ISearchAlgorithm):
 
 class KMP(ISearchAlgorithm):
     def setup(self):
-        pass
+        search_key = APP_CONFIG.search_key
+        search_key_len = len(search_key)
+        longest_prefix_table = [0] * search_key_len
+
+        prev_prefix_len = 0
+        search_key_index = 1
+
+        while search_key_index < search_key_len:
+
+            if search_key[search_key_index] == search_key[prev_prefix_len]:
+                prev_prefix_len += 1
+                longest_prefix_table[search_key_index] = prev_prefix_len
+                search_key_index += 1
+
+            else:
+                if prev_prefix_len != 0:
+                    prev_prefix_len = longest_prefix_table[prev_prefix_len - 1]
+                
+                else:
+                    longest_prefix_table[search_key_index] = 0
+                    search_key_index += 1
+
+        APP_CONFIG.longest_prefix_table = longest_prefix_table
 
 
     def run(self):
-        print("KMP")
+        longest_prefix_table = APP_CONFIG.longest_prefix_table
+
+        print(longest_prefix_table)
+
+        search_key = APP_CONFIG.search_key
+        search_key_len = len(search_key)
+        search_key_index = 0
+
+        file_index = 0
+
+        start_index = APP_CONFIG.range[0]
+        end_index = APP_CONFIG.range[1]
+
+        chars_to_check = end_index - start_index
+
+        with open(APP_CONFIG.file_path, "r", encoding="utf-8") as f:
+            text_fragment = f.read()[start_index : end_index + 1]
+
+        #print(f"{RANK} {text_fragment}")
+
+        while file_index <= chars_to_check:
+
+            char = text_fragment[file_index]
+
+            #print(f"Process {RANK} has {char} at {file_index + start_index} - hits so far {search_key_index}")
+
+            if char == search_key[search_key_index]:
+                search_key_index += 1
+                file_index += 1
+            
+            else:
+                if search_key_index != 0:
+                    search_key_index = longest_prefix_table[search_key_index - 1]
+                else:
+                    file_index += 1
+
+            if search_key_index == search_key_len:
+                print(f"Process {RANK} found key at {(file_index - 1) + start_index - (search_key_len - 1)}")
+                search_key_index = longest_prefix_table[search_key_index - 1]
 
 
 class Exit(ISearchAlgorithm):
@@ -155,6 +217,7 @@ class AppConfig:
     algorithm_choice: int | None = None
     range: tuple[int, int] | None = None
     bad_match_table: dict[str, int] | None = None
+    longest_prefix_table: list[int] | None = None
 
 
 class FilePathValidator:
@@ -295,6 +358,7 @@ if __name__ == "__main__":
         algorithm.setup()
     
     APP_CONFIG.bad_match_table = COMM.bcast(APP_CONFIG.bad_match_table, root=0)
+    APP_CONFIG.longest_prefix_table = COMM.bcast(APP_CONFIG.longest_prefix_table, root=0)
 
     algorithm.run()
 
