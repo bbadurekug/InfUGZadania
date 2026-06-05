@@ -20,6 +20,7 @@ class ISearchAlgorithm(ABC):
     def setup(self):
         pass
 
+
     @abstractmethod
     def run(self):
         pass
@@ -28,6 +29,7 @@ class ISearchAlgorithm(ABC):
 class BruteForce(ISearchAlgorithm):
     def setup(self):
         pass
+
 
     def run(self):
         search_key = APP_CONFIG.search_key
@@ -67,15 +69,58 @@ class BruteForce(ISearchAlgorithm):
 
 class BoyerMoore(ISearchAlgorithm):
     def setup(self):
-        pass
+        bad_match_table = {}
+        search_key = APP_CONFIG.search_key
+        search_key_len = len(search_key)
+
+        for i in range(search_key_len - 1):
+            bad_match_table[search_key[i]] = search_key_len - i - 1
+
+        APP_CONFIG.bad_match_table = bad_match_table
+
 
     def run(self):
-        print("Boyer-Moore")
+        #print(APP_CONFIG.bad_match_table)
+
+        bad_match_table = APP_CONFIG.bad_match_table
+
+        search_key = APP_CONFIG.search_key
+        search_key_len = len(search_key)
+        search_key_index = 0
+
+        file_index = 0
+        chars_to_check = APP_CONFIG.range[1] - APP_CONFIG.range[0]
+
+        start_index = APP_CONFIG.range[0]
+        end_index = APP_CONFIG.range[1]
+
+        with open(APP_CONFIG.file_path, "r", encoding="utf-8") as f:
+            text_fragment = f.read()[start_index : end_index + 1]
+
+        #print(f"{RANK} {text_fragment}")
+
+        while file_index <= chars_to_check - search_key_len + 1:
+
+            search_key_index = search_key_len - 1
+
+            while search_key_index >= 0 and text_fragment[file_index + search_key_index] == search_key[search_key_index]:
+                #print(f"Process {RANK} checking {text_fragment[file_index + search_key_index]} against {search_key[search_key_index]}")
+                search_key_index -= 1
+
+            if search_key_index < 0:
+                print(f"Process {RANK} found key at {file_index + start_index}")
+                shift = 1
+            else:
+                char_at_end_of_window = text_fragment[file_index + search_key_len - 1]
+                shift = bad_match_table.get(char_at_end_of_window, search_key_len)
+
+            file_index += shift
 
 
 class KMP(ISearchAlgorithm):
     def setup(self):
         pass
+
 
     def run(self):
         print("KMP")
@@ -84,6 +129,7 @@ class KMP(ISearchAlgorithm):
 class Exit(ISearchAlgorithm):
     def setup(self):
         pass
+
 
     def run(self):
         if RANK == 0:
@@ -108,6 +154,7 @@ class AppConfig:
     search_key: str
     algorithm_choice: int | None = None
     range: tuple[int, int] | None = None
+    bad_match_table: dict[str, int] | None = None
 
 
 class FilePathValidator:
@@ -246,6 +293,8 @@ if __name__ == "__main__":
 
     if RANK == 0:
         algorithm.setup()
+    
+    APP_CONFIG.bad_match_table = COMM.bcast(APP_CONFIG.bad_match_table, root=0)
 
     algorithm.run()
 
