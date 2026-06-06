@@ -8,6 +8,8 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 import sys
 import os
+import time
+import argparse
 
 
 COMM = MPI.COMM_WORLD
@@ -46,7 +48,14 @@ class BruteForce(ISearchAlgorithm):
         with open(APP_CONFIG.file_path, "r", encoding="utf-8") as f:
             text_fragment = f.read()[start_index : end_index + 1]
 
-        #print(f"{RANK} {text_fragment}")
+        if APP_CONFIG.keep_newlines:
+            text_fragment = text_fragment.rstrip('\r\n')
+
+        if APP_CONFIG.ignore_case:
+            text_fragment = text_fragment.lower()
+
+        if RANK == 0 and APP_CONFIG.verbose:
+            print("-" * 100)
 
         while file_index <= chars_to_check:
 
@@ -58,10 +67,14 @@ class BruteForce(ISearchAlgorithm):
                 file_index -= search_key_index
                 search_key_index = 0
 
-            #print(f"Process {RANK} has {char} at {file_index + start_index} - hits so far {search_key_index}")
+            if APP_CONFIG.verbose:
+                print(f"Process {RANK} has {char} at {file_index + start_index} - hits so far {search_key_index}")
 
             if search_key_index == search_key_len:
-                print(f"Process {RANK} found key at {file_index + start_index - (search_key_len - 1)}")
+                if APP_CONFIG.verbose:
+                    print(f"Process {RANK} found key at {file_index + start_index - (search_key_len - 1)}")
+
+                APP_CONFIG.keys_found_indexes.append(file_index + start_index - (search_key_len - 1))
                 file_index -= (search_key_index - 1)
                 search_key_index = 0
 
@@ -77,12 +90,14 @@ class BoyerMoore(ISearchAlgorithm):
         for i in range(search_key_len - 1):
             bad_match_table[search_key[i]] = search_key_len - i - 1
 
+        print("-" * 100)
+        print("Słownik bad match:")
+        print(bad_match_table)
+
         APP_CONFIG.bad_match_table = bad_match_table
 
 
     def run(self):
-        #print(APP_CONFIG.bad_match_table)
-
         bad_match_table = APP_CONFIG.bad_match_table
 
         search_key = APP_CONFIG.search_key
@@ -99,18 +114,29 @@ class BoyerMoore(ISearchAlgorithm):
         with open(APP_CONFIG.file_path, "r", encoding="utf-8") as f:
             text_fragment = f.read()[start_index : end_index + 1]
 
-        #print(f"{RANK} {text_fragment}")
+        if APP_CONFIG.keep_newlines:
+            text_fragment = text_fragment.rstrip('\r\n')
+
+        if APP_CONFIG.ignore_case:
+            text_fragment = text_fragment.lower()
+
+        if RANK == 0 and APP_CONFIG.verbose:
+            print("-" * 100)
 
         while file_index <= chars_to_check - search_key_len + 1:
 
             search_key_index = search_key_len - 1
 
             while search_key_index >= 0 and text_fragment[file_index + search_key_index] == search_key[search_key_index]:
-                #print(f"Process {RANK} checking {text_fragment[file_index + search_key_index]} against {search_key[search_key_index]} - hits so far {search_key_len - search_key_index}")
+                if APP_CONFIG.verbose:
+                    print(f"Process {RANK} checking {text_fragment[file_index + search_key_index]} against {search_key[search_key_index]} - hits so far {search_key_len - search_key_index}")
                 search_key_index -= 1
 
             if search_key_index < 0:
-                print(f"Process {RANK} found key at {file_index + start_index}")
+                if APP_CONFIG.verbose:
+                    print(f"Process {RANK} found key at {file_index + start_index}")
+
+                APP_CONFIG.keys_found_indexes.append(file_index + start_index)
                 shift = 1
             else:
                 char_at_end_of_window = text_fragment[file_index + search_key_len - 1]
@@ -143,13 +169,16 @@ class KMP(ISearchAlgorithm):
                     longest_prefix_table[search_key_index] = 0
                     search_key_index += 1
 
+        print("-" * 100)
+        print("Tabela prefix'ów:")
+        print(f"[{", ".join([char for char in search_key])}]")
+        print(longest_prefix_table)
+
         APP_CONFIG.longest_prefix_table = longest_prefix_table
 
 
     def run(self):
         longest_prefix_table = APP_CONFIG.longest_prefix_table
-
-        print(longest_prefix_table)
 
         search_key = APP_CONFIG.search_key
         search_key_len = len(search_key)
@@ -165,13 +194,21 @@ class KMP(ISearchAlgorithm):
         with open(APP_CONFIG.file_path, "r", encoding="utf-8") as f:
             text_fragment = f.read()[start_index : end_index + 1]
 
-        #print(f"{RANK} {text_fragment}")
+        if APP_CONFIG.keep_newlines:
+            text_fragment = text_fragment.rstrip('\r\n')
+
+        if APP_CONFIG.ignore_case:
+            text_fragment = text_fragment.lower()
+
+        if RANK == 0 and APP_CONFIG.verbose:
+            print("-" * 100)
 
         while file_index <= chars_to_check:
 
             char = text_fragment[file_index]
 
-            #print(f"Process {RANK} has {char} at {file_index + start_index} - hits so far {search_key_index}")
+            if APP_CONFIG.verbose:
+                print(f"Process {RANK} has {char} at {file_index + start_index} - hits so far {search_key_index}")
 
             if char == search_key[search_key_index]:
                 search_key_index += 1
@@ -184,36 +221,33 @@ class KMP(ISearchAlgorithm):
                     file_index += 1
 
             if search_key_index == search_key_len:
-                print(f"Process {RANK} found key at {(file_index - 1) + start_index - (search_key_len - 1)}")
+                if APP_CONFIG.verbose:
+                    print(f"Process {RANK} found key at {(file_index - 1) + start_index - (search_key_len - 1)}")
+
+                APP_CONFIG.keys_found_indexes.append((file_index - 1) + start_index - (search_key_len - 1))
                 search_key_index = longest_prefix_table[search_key_index - 1]
 
 
-class Exit(ISearchAlgorithm):
-    def setup(self):
-        pass
+class AlgorithmFactory:
+    _ALGORITHMS = {
+        1: BruteForce,
+        2: BoyerMoore,
+        3: KMP
+    }
 
-
-    def run(self):
-        if RANK == 0:
-            print("Zamykanie programu...")
-            
-        COMM.Abort(0)
-
-
-#TODO brzydal
-class AlgorithmFactory():
     def get_algorithm(self, choice: int) -> ISearchAlgorithm | None:
-        if choice == 1: return BruteForce()
-        if choice == 2: return BoyerMoore()
-        if choice == 3: return KMP()
-        if choice == 9: return Exit()
-        return None
+        algorithm_class = self._ALGORITHMS.get(choice)
+        return algorithm_class() if algorithm_class else None
 
 
 @dataclass
 class AppConfig:
     file_path: str
     search_key: str
+    ignore_case: bool = False
+    keep_newlines: bool = False
+    verbose: bool = False
+    keys_found_indexes: list[int] | None = None
     algorithm_choice: int | None = None
     range: tuple[int, int] | None = None
     bad_match_table: dict[str, int] | None = None
@@ -221,40 +255,80 @@ class AppConfig:
 
 
 class FilePathValidator:
-    def is_valid(self, file_path) -> bool:
-        return os.path.exists(file_path) and os.path.isfile(file_path)
+    def is_valid(self, file_path, keep_newlines) -> bool:
+        return (self._check_if_exists(file_path)
+                and self._check_if_is_file(file_path)
+                and self._check_if_has_access(file_path)
+                and self._check_if_big_enough(file_path, keep_newlines))
+    
+    def _check_if_exists(self, file_path) -> bool:
+        return os.path.exists(file_path)
+
+    def _check_if_is_file(self, file_path) -> bool:
+        return os.path.isfile(file_path)
+    
+    def _check_if_has_access(self, file_path) -> bool:
+        return os.access(file_path, os.R_OK)
+    
+    def _check_if_big_enough(self, file_path, keep_newlines) -> bool:
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        if keep_newlines:
+            content = content.rstrip('\r\n')
+
+        char_count = len(content)
+
+        return True if char_count >= SIZE else False
 
 
 class InputReader:
     def __init__(self, validator: FilePathValidator):
+        self.parser = argparse.ArgumentParser(description="Wyszukiwanie wzorców w pliku za pomocą MPI")
+    
+        self.parser.add_argument("file_path", type=str, help="Ścieżka do pliku tekstowego")
+        self.parser.add_argument("search_key", type=str, help="Szukany wzorzec (klucz)")
+        
+        self.parser.add_argument("-i", "--ignore-case", action="store_true", help="Ignorowanie wielkości liter podczas wyszukiwania")
+        self.parser.add_argument("-n", "--keep-newlines", action="store_true", help="Zachowanie znaków nowej linii w tekście pliku")
+        self.parser.add_argument("-v", "--verbose", action="store_true", help="Wyświetlenie informacji o sprawdzanych znakach i znalezeniu kluczy przez procesy")
+
+        self.args = self.parser.parse_args()
+        
         self.validator = validator
     
     def get_config(self) -> AppConfig:
         file_path = ""
         search_key = ""
 
-        file_path = self._get_file_path()
-
-        if not self.validator.is_valid(file_path):
-            #Dodac expection handling
-            print("Podana sciezka pliku jest niepoprawna!")
-            COMM.Abort(1)
-            
+        file_path = self._get_file_path()           
         search_key = self._get_search_key()
 
-        return AppConfig(file_path=file_path, search_key=search_key)
+        if self.args.ignore_case:
+            search_key = search_key.lower()
+
+        return AppConfig(
+            file_path=file_path, 
+            search_key=search_key,
+            ignore_case=self.args.ignore_case,
+            keep_newlines=self.args.keep_newlines,
+            verbose=self.args.verbose,
+            keys_found_indexes=[]
+            )
+
 
     def _get_file_path(self) -> str:
-        if len(sys.argv) > 1:
-            return sys.argv[1]
-        else:
-            return input("Podaj sciezke do pliku:")
+        file_path = self.args.file_path if self.args.file_path else input("Podaj sciezke do pliku:")
+
+        if not self.validator.is_valid(file_path, self.args.keep_newlines):
+            print("Podana sciezka pliku jest niepoprawna!")
+            COMM.Abort(1)
+
+        return file_path
+
     
     def _get_search_key(self) -> str:
-        if len(sys.argv) > 2:
-            return sys.argv[2]
-        else:
-            return input("Podaj poszukiwany wzorzec:")
+        return self.args.search_key if self.args.search_key else input("Podaj poszukiwany wzorzec:")
 
 
 @dataclass(frozen=True)
@@ -289,14 +363,27 @@ class Menu:
         choice = -1
 
         while choice not in self.possible_options:
-            choice = int(input())
+            choice = input()
+
+            try:
+                clean_choice = int(choice)
+                choice = clean_choice
+
+            except:
+                print("Wybrana opcja nie jest liczbą! Spróbuj ponownie:")
+
+            if choice not in self.possible_options:
+                print("Wybrana opcja nie występuje na liście! Spróbuj ponownie:")
         
         return choice
 
 
     def calculate_ranges(self) -> list[tuple[int, int]]:
         with open(APP_CONFIG.file_path, "r", encoding="utf-8") as f:
-            content = f.read().rstrip('\r\n')
+            content = f.read()
+
+        if APP_CONFIG.keep_newlines:
+            content = content.rstrip('\r\n')
 
         char_count = len(content)
         search_key_size = len(APP_CONFIG.search_key)
@@ -321,6 +408,7 @@ class Menu:
 
 APP_CONFIG = 0
 RANGES = None
+TIME = 0
 
 if __name__ == "__main__":
 
@@ -342,14 +430,22 @@ if __name__ == "__main__":
 
         menu = Menu("Witaj w programie do znajdowania wzorca w pliku:", "Wybierz jedną z opcji:", menu_options)
         APP_CONFIG.algorithm_choice = menu.run_choice_loop()
-        RANGES = menu.calculate_ranges()
 
     APP_CONFIG.algorithm_choice = COMM.bcast(APP_CONFIG.algorithm_choice, root=0)
+
+    if APP_CONFIG.algorithm_choice == 9:
+        MPI.Finalize()
+        if RANK == 0:
+            print("Zamykanie programu...")
+
+        sys.exit(0)
+
+    if RANK == 0:
+        RANGES = menu.calculate_ranges()
+
     APP_CONFIG.range = COMM.scatter(RANGES, root=0)
 
     COMM.Barrier()
-
-    #print(RANK, APP_CONFIG)
 
     algorithm_factory = AlgorithmFactory()
     algorithm = algorithm_factory.get_algorithm(APP_CONFIG.algorithm_choice)
@@ -360,6 +456,27 @@ if __name__ == "__main__":
     APP_CONFIG.bad_match_table = COMM.bcast(APP_CONFIG.bad_match_table, root=0)
     APP_CONFIG.longest_prefix_table = COMM.bcast(APP_CONFIG.longest_prefix_table, root=0)
 
+    COMM.Barrier()
+
+    start_time = time.perf_counter()
+
     algorithm.run()
+
+    COMM.Barrier()
+
+    TIME = time.perf_counter() - start_time
+
+    all_keys_found_indexes = COMM.gather(APP_CONFIG.keys_found_indexes, root=0)
+
+    if RANK == 0:
+        flat_list = [item for sublist in all_keys_found_indexes for item in sublist]
+        print("-" * 100)
+        print(f"Ilość znalezionych kluczy: {len(flat_list)}")
+        print("Na index'ach poniżej:")
+        print(flat_list)
+        print("-" * 100)
+        print("Statystyki:")
+        print(f"Ilość procesów: {SIZE}")
+        print(f"Czas potrzebny na znalezienie wszystkich kluczy: {TIME:.6f} sekund")
 
     MPI.Finalize()
