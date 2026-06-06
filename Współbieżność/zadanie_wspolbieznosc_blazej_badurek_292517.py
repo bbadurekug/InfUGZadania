@@ -48,10 +48,12 @@ class BruteForce(ISearchAlgorithm):
         comparison_counter = 0
 
         with open(APP_CONFIG.file_path, "r", encoding="utf-8") as f:
-            text_fragment = f.read()[start_index : end_index + 1]
+            full_text = f.read()
 
-        if APP_CONFIG.keep_newlines:
-            text_fragment = text_fragment.rstrip('\r\n')
+        if not APP_CONFIG.keep_newlines:
+            full_text = full_text.replace("\n", "").replace("\r", "")
+            
+        text_fragment = full_text[start_index : end_index + 1]
 
         if APP_CONFIG.ignore_case:
             text_fragment = text_fragment.lower()
@@ -120,10 +122,12 @@ class BoyerMoore(ISearchAlgorithm):
         comparison_counter = 0
 
         with open(APP_CONFIG.file_path, "r", encoding="utf-8") as f:
-            text_fragment = f.read()[start_index : end_index + 1]
+            full_text = f.read()
 
-        if APP_CONFIG.keep_newlines:
-            text_fragment = text_fragment.rstrip('\r\n')
+        if not APP_CONFIG.keep_newlines:
+            full_text = full_text.replace("\n", "").replace("\r", "")
+            
+        text_fragment = full_text[start_index : end_index + 1]
 
         if APP_CONFIG.ignore_case:
             text_fragment = text_fragment.lower()
@@ -134,6 +138,8 @@ class BoyerMoore(ISearchAlgorithm):
         while file_index <= chars_to_check - search_key_len + 1:
 
             search_key_index = search_key_len - 1
+
+            comparison_counter += 1
 
             while search_key_index >= 0 and text_fragment[file_index + search_key_index] == search_key[search_key_index]:
                 if APP_CONFIG.checks:
@@ -207,10 +213,12 @@ class KMP(ISearchAlgorithm):
         comparison_counter = 0
 
         with open(APP_CONFIG.file_path, "r", encoding="utf-8") as f:
-            text_fragment = f.read()[start_index : end_index + 1]
+            full_text = f.read()
 
-        if APP_CONFIG.keep_newlines:
-            text_fragment = text_fragment.rstrip('\r\n')
+        if not APP_CONFIG.keep_newlines:
+            full_text = full_text.replace("\n", "").replace("\r", "")
+            
+        text_fragment = full_text[start_index : end_index + 1]
 
         if APP_CONFIG.ignore_case:
             text_fragment = text_fragment.lower()
@@ -285,15 +293,39 @@ class FilePathValidator:
 
 
     def _check_if_exists(self, file_path) -> bool:
-        return os.path.exists(file_path)
+        exists = os.path.exists(file_path)
+
+        if not exists:
+            if RANK == 0:
+                print("Podany plik nie istieje! Zamykanie programu...")
+            sys.stdout.flush()
+            MPI.COMM_WORLD.Abort(1)
+
+        return exists
 
 
     def _check_if_is_file(self, file_path) -> bool:
-        return os.path.isfile(file_path)
+        is_file = os.path.isfile(file_path)
+        
+        if not is_file:
+            if RANK == 0:
+                print("Podana ścieżka nie prowadzi do pliku! Zamykanie programu...")
+            sys.stdout.flush()
+            MPI.COMM_WORLD.Abort(1)
+
+        return is_file
 
 
     def _check_if_has_access(self, file_path) -> bool:
-        return os.access(file_path, os.R_OK)
+        has_access = os.access(file_path, os.R_OK)
+
+        if not has_access:
+            if RANK == 0:
+                print("Program nie posiada autoryzacji do podanego pliku! Zamykanie programu...")
+            sys.stdout.flush()
+            MPI.COMM_WORLD.Abort(1)
+
+        return has_access
 
 
     def _check_if_big_enough(self, file_path, keep_newlines) -> bool:
@@ -301,19 +333,27 @@ class FilePathValidator:
             content = f.read()
 
         if keep_newlines:
-            content = content.rstrip('\r\n')
+            content = content.replace("\n", "").replace("\r", "")
 
         char_count = len(content)
 
-        return True if char_count >= SIZE else False
+        big_enough = True if char_count >= SIZE else False
+
+        if not big_enough:
+            if RANK == 0:
+                print("Plik posiada zbyt mało znaków do podzielenia! Zmniejsz ilośc procesów lub wybierz plik z większą ilością znaków! Zamykanie programu...")
+            sys.stdout.flush()
+            MPI.COMM_WORLD.Abort(1)
+
+        return big_enough
 
 
 class InputReader:
     def __init__(self, validator: FilePathValidator):
         self.parser = argparse.ArgumentParser(description="Wyszukiwanie wzorców w pliku za pomocą MPI")
     
-        self.parser.add_argument("file_path", type=str, help="Ścieżka do pliku tekstowego")
-        self.parser.add_argument("search_key", type=str, help="Szukany wzorzec (klucz)")
+        self.parser.add_argument("file_path", type=str, nargs="?", default=None, help="Ścieżka do pliku tekstowego")
+        self.parser.add_argument("search_key", type=str, nargs="?", default=None, help="Szukany wzorzec (klucz)")
         
         self.parser.add_argument("-i", "--ignore-case", action="store_true", help="Ignorowanie wielkości liter podczas wyszukiwania")
         self.parser.add_argument("-n", "--keep-newlines", action="store_true", help="Zachowanie znaków nowej linii w tekście pliku")
@@ -351,9 +391,7 @@ class InputReader:
     def _get_file_path(self) -> str:
         file_path = self.args.file_path if self.args.file_path else input("Podaj sciezke do pliku:")
 
-        if not self.validator.is_valid(file_path, self.args.keep_newlines):
-            print("Podana sciezka pliku jest niepoprawna!")
-            COMM.Abort(1)
+        self.validator.is_valid(file_path, self.args.keep_newlines)
 
         return file_path
 
@@ -394,28 +432,30 @@ class Menu:
 
         choice = -1
 
-        while choice not in self.possible_options:
+        while True:
             choice = input()
 
             try:
                 clean_choice = int(choice)
                 choice = clean_choice
 
-            except:
+                if choice in self.possible_options:
+                    return choice
+
+                print("Wybrana opcja nie występuje na liście! Spróbuj ponownie:")
+
+            except ValueError:
                 print("Wybrana opcja nie jest liczbą! Spróbuj ponownie:")
 
-            if choice not in self.possible_options:
-                print("Wybrana opcja nie występuje na liście! Spróbuj ponownie:")
-        
-        return choice
+            sys.stdout.flush()
 
 
     def calculate_ranges(self) -> list[tuple[int, int]]:
         with open(APP_CONFIG.file_path, "r", encoding="utf-8") as f:
             content = f.read()
 
-        if APP_CONFIG.keep_newlines:
-            content = content.rstrip('\r\n')
+        if not APP_CONFIG.keep_newlines:
+            content = content.replace("\n", "").replace("\r", "")
 
         char_count = len(content)
         search_key_size = len(APP_CONFIG.search_key)
@@ -490,13 +530,9 @@ if __name__ == "__main__":
     algorithm = algorithm_factory.get_algorithm(APP_CONFIG.algorithm_choice)
 
     if RANK == 0:
-        if APP_CONFIG.stats:
-            setup_start_time = time.perf_counter()
-
+        setup_start_time = time.perf_counter()
         algorithm.setup()
-
-        if APP_CONFIG.stats:
-            SETUP_TIME = time.perf_counter() - setup_start_time
+        SETUP_TIME = time.perf_counter() - setup_start_time
     
     APP_CONFIG.bad_match_table = COMM.bcast(APP_CONFIG.bad_match_table, root=0)
     APP_CONFIG.longest_prefix_table = COMM.bcast(APP_CONFIG.longest_prefix_table, root=0)
@@ -504,16 +540,14 @@ if __name__ == "__main__":
     sys.stdout.flush()
     COMM.Barrier()
 
-    if RANK == 0 and APP_CONFIG.stats:
-        run_start_time = time.perf_counter()
+    run_start_time = time.perf_counter()
 
     algorithm.run()
 
     sys.stdout.flush()
     COMM.Barrier()
 
-    if RANK == 0 and APP_CONFIG.stats:
-        RUN_TIME = time.perf_counter() - run_start_time
+    RUN_TIME = time.perf_counter() - run_start_time
 
     all_keys_found_indexes = COMM.gather(APP_CONFIG.keys_found_indexes, root=0)
     all_comparison_counters = COMM.gather(APP_CONFIG.comparison_counter, root=0)
@@ -529,7 +563,7 @@ if __name__ == "__main__":
         if APP_CONFIG.stats:
             print("Statystyki końcowe".center(100, "-"))
             print(f"Ilość procesów: {SIZE}")
-            print(f"Ilość porównań znaków {APP_CONFIG.comparison_counter}")
+            print(f"Ilość porównań znaków {comparisons}")
             print(f"Czas przygotowania do algorytmu: {SETUP_TIME:.6f} s")
             print(f"Czas działania algorytmu: {RUN_TIME:.6f} s")
             print(f"Łączny czas (przygotowanie i algorytm): {SETUP_TIME + RUN_TIME:.6f} s")
