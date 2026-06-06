@@ -45,6 +45,8 @@ class BruteForce(ISearchAlgorithm):
 
         chars_to_check = end_index - start_index
 
+        comparison_counter = 0
+
         with open(APP_CONFIG.file_path, "r", encoding="utf-8") as f:
             text_fragment = f.read()[start_index : end_index + 1]
 
@@ -54,12 +56,14 @@ class BruteForce(ISearchAlgorithm):
         if APP_CONFIG.ignore_case:
             text_fragment = text_fragment.lower()
 
-        if RANK == 0 and APP_CONFIG.verbose:
-            print("-" * 100)
+        if RANK == 0 and APP_CONFIG.checks:
+            print("Logi procesów".center(100, "-"))
 
         while file_index <= chars_to_check:
 
             char = text_fragment[file_index]
+
+            comparison_counter += 1
 
             if char == search_key[search_key_index]:
                 search_key_index += 1
@@ -67,18 +71,20 @@ class BruteForce(ISearchAlgorithm):
                 file_index -= search_key_index
                 search_key_index = 0
 
-            if APP_CONFIG.verbose:
-                print(f"Process {RANK} has {char} at {file_index + start_index} - hits so far {search_key_index}")
+            if APP_CONFIG.checks:
+                print(f"[Process {RANK}] sprawdza {char} na index'ie {file_index + start_index} - na razie pasuje {search_key_index} znaków")
 
             if search_key_index == search_key_len:
-                if APP_CONFIG.verbose:
-                    print(f"Process {RANK} found key at {file_index + start_index - (search_key_len - 1)}")
+                if APP_CONFIG.finds:
+                    print(f"[Process {RANK}] znaleziono klucz na index'ie: {file_index + start_index - (search_key_len - 1)}")
 
                 APP_CONFIG.keys_found_indexes.append(file_index + start_index - (search_key_len - 1))
                 file_index -= (search_key_index - 1)
                 search_key_index = 0
 
             file_index += 1
+        
+        APP_CONFIG.comparison_counter = comparison_counter
 
 
 class BoyerMoore(ISearchAlgorithm):
@@ -90,7 +96,7 @@ class BoyerMoore(ISearchAlgorithm):
         for i in range(search_key_len - 1):
             bad_match_table[search_key[i]] = search_key_len - i - 1
 
-        print("-" * 100)
+        print("Przygotowanie algorytmu".center(100, "-"))
         print("Słownik bad match:")
         print(bad_match_table)
 
@@ -111,6 +117,8 @@ class BoyerMoore(ISearchAlgorithm):
 
         chars_to_check = end_index - start_index
 
+        comparison_counter = 0
+
         with open(APP_CONFIG.file_path, "r", encoding="utf-8") as f:
             text_fragment = f.read()[start_index : end_index + 1]
 
@@ -120,21 +128,24 @@ class BoyerMoore(ISearchAlgorithm):
         if APP_CONFIG.ignore_case:
             text_fragment = text_fragment.lower()
 
-        if RANK == 0 and APP_CONFIG.verbose:
-            print("-" * 100)
+        if RANK == 0 and APP_CONFIG.checks:
+            print("Logi procesów".center(100, "-"))
 
         while file_index <= chars_to_check - search_key_len + 1:
 
             search_key_index = search_key_len - 1
 
             while search_key_index >= 0 and text_fragment[file_index + search_key_index] == search_key[search_key_index]:
-                if APP_CONFIG.verbose:
-                    print(f"Process {RANK} checking {text_fragment[file_index + search_key_index]} against {search_key[search_key_index]} - hits so far {search_key_len - search_key_index}")
+                if APP_CONFIG.checks:
+                    print(f"[Process {RANK}] sprawdza {text_fragment[file_index + search_key_index]} na index'ie {file_index + search_key_index} - na razie pasuje {search_key_len - search_key_index} znaków")
+
+                comparison_counter += 1
+
                 search_key_index -= 1
 
             if search_key_index < 0:
-                if APP_CONFIG.verbose:
-                    print(f"Process {RANK} found key at {file_index + start_index}")
+                if APP_CONFIG.finds:
+                    print(f"[Process {RANK}] znaleziono klucz na index'ie: {file_index + start_index}")
 
                 APP_CONFIG.keys_found_indexes.append(file_index + start_index)
                 shift = 1
@@ -143,6 +154,8 @@ class BoyerMoore(ISearchAlgorithm):
                 shift = bad_match_table.get(char_at_end_of_window, search_key_len)
 
             file_index += shift
+
+        APP_CONFIG.comparison_counter = comparison_counter
 
 
 class KMP(ISearchAlgorithm):
@@ -169,7 +182,7 @@ class KMP(ISearchAlgorithm):
                     longest_prefix_table[search_key_index] = 0
                     search_key_index += 1
 
-        print("-" * 100)
+        print("Przygotowanie algorytmu".center(100, "-"))
         print("Tabela prefix'ów:")
         print(f"[{", ".join([char for char in search_key])}]")
         print(longest_prefix_table)
@@ -191,6 +204,8 @@ class KMP(ISearchAlgorithm):
 
         chars_to_check = end_index - start_index
 
+        comparison_counter = 0
+
         with open(APP_CONFIG.file_path, "r", encoding="utf-8") as f:
             text_fragment = f.read()[start_index : end_index + 1]
 
@@ -200,15 +215,17 @@ class KMP(ISearchAlgorithm):
         if APP_CONFIG.ignore_case:
             text_fragment = text_fragment.lower()
 
-        if RANK == 0 and APP_CONFIG.verbose:
-            print("-" * 100)
+        if RANK == 0 and APP_CONFIG.checks:
+            print("Logi procesów".center(100, "-"))
 
         while file_index <= chars_to_check:
 
             char = text_fragment[file_index]
 
-            if APP_CONFIG.verbose:
-                print(f"Process {RANK} has {char} at {file_index + start_index} - hits so far {search_key_index}")
+            comparison_counter += 1
+
+            if APP_CONFIG.checks:
+                print(f"[Process {RANK}] sprawdza {char} na index'ie {file_index + start_index} - na razie pasuje {search_key_index} znaków")
 
             if char == search_key[search_key_index]:
                 search_key_index += 1
@@ -221,11 +238,13 @@ class KMP(ISearchAlgorithm):
                     file_index += 1
 
             if search_key_index == search_key_len:
-                if APP_CONFIG.verbose:
-                    print(f"Process {RANK} found key at {(file_index - 1) + start_index - (search_key_len - 1)}")
+                if APP_CONFIG.finds:
+                    print(f"[Process {RANK}] znaleziono klucz na index'ie: {(file_index - 1) + start_index - (search_key_len - 1)}")
 
                 APP_CONFIG.keys_found_indexes.append((file_index - 1) + start_index - (search_key_len - 1))
                 search_key_index = longest_prefix_table[search_key_index - 1]
+        
+        APP_CONFIG.comparison_counter = comparison_counter
 
 
 class AlgorithmFactory:
@@ -246,10 +265,13 @@ class AppConfig:
     search_key: str
     ignore_case: bool = False
     keep_newlines: bool = False
-    verbose: bool = False
+    checks: bool = False
+    finds: bool = False
+    stats: bool = False
     keys_found_indexes: list[int] | None = None
     algorithm_choice: int | None = None
     range: tuple[int, int] | None = None
+    comparison_counter: int | None = None
     bad_match_table: dict[str, int] | None = None
     longest_prefix_table: list[int] | None = None
 
@@ -260,16 +282,20 @@ class FilePathValidator:
                 and self._check_if_is_file(file_path)
                 and self._check_if_has_access(file_path)
                 and self._check_if_big_enough(file_path, keep_newlines))
-    
+
+
     def _check_if_exists(self, file_path) -> bool:
         return os.path.exists(file_path)
 
+
     def _check_if_is_file(self, file_path) -> bool:
         return os.path.isfile(file_path)
-    
+
+
     def _check_if_has_access(self, file_path) -> bool:
         return os.access(file_path, os.R_OK)
-    
+
+
     def _check_if_big_enough(self, file_path, keep_newlines) -> bool:
         with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
@@ -291,12 +317,15 @@ class InputReader:
         
         self.parser.add_argument("-i", "--ignore-case", action="store_true", help="Ignorowanie wielkości liter podczas wyszukiwania")
         self.parser.add_argument("-n", "--keep-newlines", action="store_true", help="Zachowanie znaków nowej linii w tekście pliku")
-        self.parser.add_argument("-v", "--verbose", action="store_true", help="Wyświetlenie informacji o sprawdzanych znakach i znalezeniu kluczy przez procesy")
+        self.parser.add_argument("-c", "--checks", action="store_true", help="Wyświetlenie informacji o sprawdzanych znakach")
+        self.parser.add_argument("-f", "--finds", action="store_true", help="Wyświetlenie informacji o znalezeniu kluczy przez procesy")
+        self.parser.add_argument("-s", "--stats", action="store_true", help="Wyświetlenie statystyk na początku i końcu")
 
         self.args = self.parser.parse_args()
         
         self.validator = validator
-    
+
+
     def get_config(self) -> AppConfig:
         file_path = ""
         search_key = ""
@@ -312,7 +341,9 @@ class InputReader:
             search_key=search_key,
             ignore_case=self.args.ignore_case,
             keep_newlines=self.args.keep_newlines,
-            verbose=self.args.verbose,
+            checks=self.args.checks,
+            finds=self.args.finds,
+            stats=self.args.stats,
             keys_found_indexes=[]
             )
 
@@ -356,6 +387,7 @@ class Menu:
 
 
     def run_choice_loop(self) -> int:
+        print("Menu".center(100, "-"))
         print(self.title)
         print(self.options_string)
         print(self.prompt)
@@ -387,13 +419,9 @@ class Menu:
 
         char_count = len(content)
         search_key_size = len(APP_CONFIG.search_key)
-
-        #print(char_count, search_key_size)
         
         chunk_size = char_count // SIZE
         remainder = char_count % SIZE
-
-        #print(chunk_size, remainder)
 
         start = 0
         ranges = []
@@ -403,12 +431,22 @@ class Menu:
             ranges.append([start, end + ((search_key_size - 1) if process < (SIZE - 1) else 0) + (remainder if process == (SIZE - 1) else 0)])
             start = end + (1 if process < (SIZE - 1) else 0)
 
+        if APP_CONFIG.stats:
+            print("Statystyki początkowe".center(100, "-"))
+            print(f"Ścieżka do pliku: {APP_CONFIG.file_path}")
+            print(f"Ilość znaków w pliku: {char_count}")
+            print(f"Poszukiwany klucz: {APP_CONFIG.search_key}")
+            print(f"Ilość znaków w kluczu: {search_key_size}")
+            print("Wyznaczone przedziały (index'owane od 0):")
+            print(ranges)
+
         return ranges
 
 
 APP_CONFIG = 0
 RANGES = None
-TIME = 0
+RUN_TIME = 0
+SETUP_TIME = 0
 
 if __name__ == "__main__":
 
@@ -445,38 +483,57 @@ if __name__ == "__main__":
 
     APP_CONFIG.range = COMM.scatter(RANGES, root=0)
 
+    sys.stdout.flush()
     COMM.Barrier()
 
     algorithm_factory = AlgorithmFactory()
     algorithm = algorithm_factory.get_algorithm(APP_CONFIG.algorithm_choice)
 
     if RANK == 0:
+        if APP_CONFIG.stats:
+            setup_start_time = time.perf_counter()
+
         algorithm.setup()
+
+        if APP_CONFIG.stats:
+            SETUP_TIME = time.perf_counter() - setup_start_time
     
     APP_CONFIG.bad_match_table = COMM.bcast(APP_CONFIG.bad_match_table, root=0)
     APP_CONFIG.longest_prefix_table = COMM.bcast(APP_CONFIG.longest_prefix_table, root=0)
 
+    sys.stdout.flush()
     COMM.Barrier()
 
-    start_time = time.perf_counter()
+    if RANK == 0 and APP_CONFIG.stats:
+        run_start_time = time.perf_counter()
 
     algorithm.run()
 
+    sys.stdout.flush()
     COMM.Barrier()
 
-    TIME = time.perf_counter() - start_time
+    if RANK == 0 and APP_CONFIG.stats:
+        RUN_TIME = time.perf_counter() - run_start_time
 
     all_keys_found_indexes = COMM.gather(APP_CONFIG.keys_found_indexes, root=0)
+    all_comparison_counters = COMM.gather(APP_CONFIG.comparison_counter, root=0)
 
     if RANK == 0:
         flat_list = [item for sublist in all_keys_found_indexes for item in sublist]
-        print("-" * 100)
+        comparisons = sum(all_comparison_counters)
+        print("Wyniki".center(100, "-"))
         print(f"Ilość znalezionych kluczy: {len(flat_list)}")
         print("Na index'ach poniżej:")
         print(flat_list)
-        print("-" * 100)
-        print("Statystyki:")
-        print(f"Ilość procesów: {SIZE}")
-        print(f"Czas potrzebny na znalezienie wszystkich kluczy: {TIME:.6f} sekund")
+
+        if APP_CONFIG.stats:
+            print("Statystyki końcowe".center(100, "-"))
+            print(f"Ilość procesów: {SIZE}")
+            print(f"Ilość porównań znaków {APP_CONFIG.comparison_counter}")
+            print(f"Czas przygotowania do algorytmu: {SETUP_TIME:.6f} s")
+            print(f"Czas działania algorytmu: {RUN_TIME:.6f} s")
+            print(f"Łączny czas (przygotowanie i algorytm): {SETUP_TIME + RUN_TIME:.6f} s")
+
+        print("Dziękuję za skorzystanie z programu!".center(100, "-"))
 
     MPI.Finalize()
