@@ -161,22 +161,27 @@ class BoyerMoore(ISearchAlgorithm):
             print("Logi procesów".center(100, "-"))
 
         while file_index <= chars_to_check - search_key_len + 1:
+
+            if APP_CONFIG.race and COMM.iprobe(source=MPI.ANY_SOURCE, tag=TAG_STOP):
+                WINNER, WINNER_INDEX = COMM.recv(source=MPI.ANY_SOURCE, tag=TAG_STOP)
+                break
             
             search_key_index = search_key_len - 1
 
-            comparison_counter += 1
-
-            while search_key_index >= 0 and text_fragment[file_index + search_key_index] == search_key[search_key_index]:
-                if APP_CONFIG.race and COMM.iprobe(source=MPI.ANY_SOURCE, tag=TAG_STOP):
-                    WINNER, WINNER_INDEX = COMM.recv(source=MPI.ANY_SOURCE, tag=TAG_STOP)
-                    break
-
-                if APP_CONFIG.checks:
-                    print(f"[Process {RANK}] sprawdza {text_fragment[file_index + search_key_index]} na index'ie {file_index + search_key_index} - na razie pasuje {search_key_len - search_key_index} znaków")
+            while search_key_index >= 0:
 
                 comparison_counter += 1
 
-                search_key_index -= 1
+                char_in_text = text_fragment[file_index + search_key_index]
+                char_in_key = search_key[search_key_index]
+
+                if APP_CONFIG.checks:
+                    print(f"[Process {RANK}] sprawdza {char_in_text} na index'ie {file_index + search_key_index} - na razie pasuje {search_key_len - search_key_index} znaków")
+
+                if char_in_text == char_in_key:
+                    search_key_index -= 1
+                else:
+                    break
 
             if search_key_index < 0:
                 key_found_at_index = file_index + start_index
@@ -185,7 +190,6 @@ class BoyerMoore(ISearchAlgorithm):
                     print(f"[Process {RANK}] znaleziono klucz na index'ie: {key_found_at_index}")
 
                 APP_CONFIG.keys_found_indexes.append(key_found_at_index)
-                shift = 1
 
                 if APP_CONFIG.race:
                     WINNER = RANK
@@ -194,9 +198,9 @@ class BoyerMoore(ISearchAlgorithm):
                         if p != RANK:
                             COMM.isend((RANK, key_found_at_index) , dest=p, tag=TAG_STOP)
                     break
-            else:
-                char_at_end_of_window = text_fragment[file_index + search_key_len - 1]
-                shift = bad_match_table.get(char_at_end_of_window, search_key_len)
+            
+            char_at_end_of_window = text_fragment[file_index + search_key_len - 1]
+            shift = bad_match_table.get(char_at_end_of_window, search_key_len)
 
             file_index += shift
 
