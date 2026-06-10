@@ -1,6 +1,13 @@
 '''
 source .venv/bin/activate
-mpiexec -n 3 python3.14 zadanie_wspolbieznosc_blazej_badurek_292517.py ./text.txt tat
+mpirun -n 3 python3.14 zadanie_wspolbieznosc_blazej_badurek_292517.py ./text.txt lorem
+'''
+
+'''
+jezeli chcemy odpalic wiecej procesow niz watkow w procesorze, musimy uzyc flagi --oversubscribe dla mpirun
+
+np.
+mpirun --oversubscribe -n 8 python3.14 zadanie_wspolbieznosc_blazej_badurek_292517.py ./text.txt lorem
 '''
 
 from mpi4py import MPI
@@ -34,6 +41,8 @@ class BruteForce(ISearchAlgorithm):
 
 
     def run(self):
+        global WINNER, WINNER_INDEX
+
         search_key = APP_CONFIG.search_key
         search_key_len = len(search_key)
         search_key_index = 0
@@ -63,6 +72,10 @@ class BruteForce(ISearchAlgorithm):
 
         while file_index <= chars_to_check:
 
+            if APP_CONFIG.race and COMM.iprobe(source=MPI.ANY_SOURCE, tag=TAG_STOP):
+                WINNER, WINNER_INDEX = COMM.recv(source=MPI.ANY_SOURCE, tag=TAG_STOP)
+                break
+
             char = text_fragment[file_index]
 
             comparison_counter += 1
@@ -77,12 +90,22 @@ class BruteForce(ISearchAlgorithm):
                 print(f"[Process {RANK}] sprawdza {char} na index'ie {file_index + start_index} - na razie pasuje {search_key_index} znaków")
 
             if search_key_index == search_key_len:
-                if APP_CONFIG.finds:
-                    print(f"[Process {RANK}] znaleziono klucz na index'ie: {file_index + start_index - (search_key_len - 1)}")
+                key_found_at_index = file_index + start_index - (search_key_len - 1)
 
-                APP_CONFIG.keys_found_indexes.append(file_index + start_index - (search_key_len - 1))
+                if APP_CONFIG.finds:
+                    print(f"[Process {RANK}] znaleziono klucz na index'ie: {key_found_at_index}")
+
+                APP_CONFIG.keys_found_indexes.append(key_found_at_index)
                 file_index -= (search_key_index - 1)
                 search_key_index = 0
+
+                if APP_CONFIG.race:
+                    WINNER = RANK
+                    WINNER_INDEX = key_found_at_index
+                    for p in range(SIZE):
+                        if p != RANK:
+                            COMM.isend((RANK, key_found_at_index) , dest=p, tag=TAG_STOP)
+                    break
 
             file_index += 1
         
@@ -106,6 +129,8 @@ class BoyerMoore(ISearchAlgorithm):
 
 
     def run(self):
+        global WINNER, WINNER_INDEX
+
         bad_match_table = APP_CONFIG.bad_match_table
 
         search_key = APP_CONFIG.search_key
@@ -136,12 +161,16 @@ class BoyerMoore(ISearchAlgorithm):
             print("Logi procesów".center(100, "-"))
 
         while file_index <= chars_to_check - search_key_len + 1:
-
+            
             search_key_index = search_key_len - 1
 
             comparison_counter += 1
 
             while search_key_index >= 0 and text_fragment[file_index + search_key_index] == search_key[search_key_index]:
+                if APP_CONFIG.race and COMM.iprobe(source=MPI.ANY_SOURCE, tag=TAG_STOP):
+                    WINNER, WINNER_INDEX = COMM.recv(source=MPI.ANY_SOURCE, tag=TAG_STOP)
+                    break
+
                 if APP_CONFIG.checks:
                     print(f"[Process {RANK}] sprawdza {text_fragment[file_index + search_key_index]} na index'ie {file_index + search_key_index} - na razie pasuje {search_key_len - search_key_index} znaków")
 
@@ -150,11 +179,21 @@ class BoyerMoore(ISearchAlgorithm):
                 search_key_index -= 1
 
             if search_key_index < 0:
-                if APP_CONFIG.finds:
-                    print(f"[Process {RANK}] znaleziono klucz na index'ie: {file_index + start_index}")
+                key_found_at_index = file_index + start_index
 
-                APP_CONFIG.keys_found_indexes.append(file_index + start_index)
+                if APP_CONFIG.finds:
+                    print(f"[Process {RANK}] znaleziono klucz na index'ie: {key_found_at_index}")
+
+                APP_CONFIG.keys_found_indexes.append(key_found_at_index)
                 shift = 1
+
+                if APP_CONFIG.race:
+                    WINNER = RANK
+                    WINNER_INDEX = key_found_at_index
+                    for p in range(SIZE):
+                        if p != RANK:
+                            COMM.isend((RANK, key_found_at_index) , dest=p, tag=TAG_STOP)
+                    break
             else:
                 char_at_end_of_window = text_fragment[file_index + search_key_len - 1]
                 shift = bad_match_table.get(char_at_end_of_window, search_key_len)
@@ -197,6 +236,8 @@ class KMP(ISearchAlgorithm):
 
 
     def run(self):
+        global WINNER, WINNER_INDEX
+
         longest_prefix_table = APP_CONFIG.longest_prefix_table
 
         search_key = APP_CONFIG.search_key
@@ -227,6 +268,10 @@ class KMP(ISearchAlgorithm):
             print("Logi procesów".center(100, "-"))
 
         while file_index <= chars_to_check:
+            
+            if APP_CONFIG.race and COMM.iprobe(source=MPI.ANY_SOURCE, tag=TAG_STOP):
+                WINNER, WINNER_INDEX = COMM.recv(source=MPI.ANY_SOURCE, tag=TAG_STOP)
+                break
 
             char = text_fragment[file_index]
 
@@ -246,11 +291,21 @@ class KMP(ISearchAlgorithm):
                     file_index += 1
 
             if search_key_index == search_key_len:
-                if APP_CONFIG.finds:
-                    print(f"[Process {RANK}] znaleziono klucz na index'ie: {(file_index - 1) + start_index - (search_key_len - 1)}")
+                key_found_at_index = (file_index - 1) + start_index - (search_key_len - 1)
 
-                APP_CONFIG.keys_found_indexes.append((file_index - 1) + start_index - (search_key_len - 1))
+                if APP_CONFIG.finds:
+                    print(f"[Process {RANK}] znaleziono klucz na index'ie: {key_found_at_index}")
+
+                APP_CONFIG.keys_found_indexes.append(key_found_at_index)
                 search_key_index = longest_prefix_table[search_key_index - 1]
+
+                if APP_CONFIG.race:
+                    WINNER = RANK
+                    WINNER_INDEX = key_found_at_index
+                    for p in range(SIZE):
+                        if p != RANK:
+                            COMM.isend((RANK, key_found_at_index) , dest=p, tag=TAG_STOP)
+                    break
         
         APP_CONFIG.comparison_counter = comparison_counter
 
@@ -276,6 +331,7 @@ class AppConfig:
     checks: bool = False
     finds: bool = False
     stats: bool = False
+    race: bool = False
     keys_found_indexes: list[int] | None = None
     algorithm_choice: int | None = None
     range: tuple[int, int] | None = None
@@ -360,6 +416,7 @@ class InputReader:
         self.parser.add_argument("-c", "--checks", action="store_true", help="Wyświetlenie informacji o sprawdzanych znakach")
         self.parser.add_argument("-f", "--finds", action="store_true", help="Wyświetlenie informacji o znalezeniu kluczy przez procesy")
         self.parser.add_argument("-s", "--stats", action="store_true", help="Wyświetlenie statystyk na początku i końcu")
+        self.parser.add_argument("-r", "--race", action="store_true", help="Pierwszy proces, który znajdzie klucz wygrywa")
 
         self.args = self.parser.parse_args()
         
@@ -384,6 +441,7 @@ class InputReader:
             checks=self.args.checks,
             finds=self.args.finds,
             stats=self.args.stats,
+            race=self.args.race,
             keys_found_indexes=[]
             )
 
@@ -488,6 +546,10 @@ RANGES = None
 RUN_TIME = 0
 SETUP_TIME = 0
 
+TAG_STOP = 99
+WINNER = -1
+WINNER_INDEX = -1
+
 if __name__ == "__main__":
 
     if RANK == 0:
@@ -549,18 +611,28 @@ if __name__ == "__main__":
 
     RUN_TIME = time.perf_counter() - run_start_time
 
+    if APP_CONFIG.race:
+        WINNER = COMM.reduce(WINNER, op=MPI.MAX, root=0)
+        WINNER_INDEX = COMM.reduce(WINNER_INDEX, op=MPI.MAX, root=0)
+
     all_keys_found_indexes = COMM.gather(APP_CONFIG.keys_found_indexes, root=0)
     all_comparison_counters = COMM.gather(APP_CONFIG.comparison_counter, root=0)
 
     if RANK == 0:
-        flat_list = [item for sublist in all_keys_found_indexes for item in sublist]
-        comparisons = sum(all_comparison_counters)
         print("Wyniki".center(100, "-"))
-        print(f"Ilość znalezionych kluczy: {len(flat_list)}")
-        print("Na index'ach poniżej:")
-        print(flat_list)
+        flat_list = [item for sublist in all_keys_found_indexes for item in sublist]
+
+        if APP_CONFIG.race:
+            print(f"Wygrywa proces: {WINNER}")
+            print(f"Znalazł klucz na index'ie: {WINNER_INDEX}")
+
+        else:
+            print(f"Ilość znalezionych kluczy: {len(flat_list)}")
+            print("Na index'ach poniżej:")
+            print(flat_list)
 
         if APP_CONFIG.stats:
+            comparisons = sum(all_comparison_counters)
             print("Statystyki końcowe".center(100, "-"))
             print(f"Ilość procesów: {SIZE}")
             print(f"Ilość porównań znaków {comparisons}")
