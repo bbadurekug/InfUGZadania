@@ -392,7 +392,7 @@ class FilePathValidator:
         with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
 
-        if keep_newlines:
+        if not keep_newlines:
             content = content.replace("\n", "").replace("\r", "")
 
         char_count = len(content)
@@ -575,13 +575,16 @@ if __name__ == "__main__":
         menu = Menu("Witaj w programie do znajdowania wzorca w pliku:", "Wybierz jedną z opcji:", menu_options)
         APP_CONFIG.algorithm_choice = menu.run_choice_loop()
 
+    COMM.Barrier()
+
     APP_CONFIG.algorithm_choice = COMM.bcast(APP_CONFIG.algorithm_choice, root=0)
 
     if APP_CONFIG.algorithm_choice == 9:
-        MPI.Finalize()
         if RANK == 0:
             print("Zamykanie programu...")
 
+        sys.stdout.flush()
+        MPI.Finalize()
         sys.exit(0)
 
     if RANK == 0:
@@ -599,6 +602,8 @@ if __name__ == "__main__":
         setup_start_time = time.perf_counter()
         algorithm.setup()
         SETUP_TIME = time.perf_counter() - setup_start_time
+
+    COMM.Barrier()
     
     APP_CONFIG.bad_match_table = COMM.bcast(APP_CONFIG.bad_match_table, root=0)
     APP_CONFIG.longest_prefix_table = COMM.bcast(APP_CONFIG.longest_prefix_table, root=0)

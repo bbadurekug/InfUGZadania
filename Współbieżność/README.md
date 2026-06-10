@@ -38,6 +38,14 @@ Np.
 mpirun --oversubscribe -n 8 python3 zadanie_wspolbieznosc_blazej_badurek_292517.py ./text.txt lorem 
 ``` 
 
+### Testy
+
+W ramach programu zostały również przygotowane zautomatyzowane testy CLI. Wystarczy odpalić je komendą (znajdując się w katalogu głównym):
+
+```bash
+python3 tests/test.py
+```
+
 ### Flagi
 
 Zdefiniowane zostały następujące flagi. Wszystkie można podjrzeć w konsoli używając flagi `-h` lub `--help`:
